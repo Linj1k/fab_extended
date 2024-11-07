@@ -4,9 +4,7 @@
     "version": "0.0.1",
     "description": "Improving the Fab.com experience",
     "permissions": [
-        "activeTab",
-        "storage",
-        "contextMenus"
+        "storage"
     ],
     "content_scripts": [
       {
@@ -16,8 +14,7 @@
       }
     ],
     "icons": {
-      "48": "icon.png",
-      "256": "icon.png"
+      "128": "icon.png"
     },
     "action": {
         "default_popup": "popup/popup.html"

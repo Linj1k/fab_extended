@@ -1,7 +1,7 @@
 # Fab Extended
 This extension adds new features to the Fab website
 
-## Fonctionnalités
+## Features
 - Favoris
 
 ## Images
