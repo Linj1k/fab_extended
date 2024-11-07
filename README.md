@@ -2,7 +2,7 @@
 This extension adds new features to the Fab website
 
 ## Features
-- Favoris
+- Favorites
 
 ## Images
 - Add heart button on product
