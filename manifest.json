@@ -1,0 +1,25 @@
+{
+    "manifest_version": 3,
+    "name": "Fab Extended",
+    "version": "1.0",
+    "description": "Improving the Fab.com experience",
+    "permissions": [
+        "activeTab",
+        "storage",
+        "contextMenus"
+    ],
+    "content_scripts": [
+      {
+        "matches": ["https://www.fab.com/*"],
+        "js": ["app/storage.js", "app/product.js"],
+        "css": []
+      }
+    ],
+    "icons": {
+      "48": "icon.png",
+      "256": "icon.png"
+    },
+    "action": {
+        "default_popup": "popup/popup.html"
+    }
+  }

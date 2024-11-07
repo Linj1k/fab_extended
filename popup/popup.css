@@ -1,0 +1,22 @@
+body {
+    width: 400px;
+    margin: 0;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+    background-color: #1d1c21!important;
+    color: white!important;
+}
+
+#favorites-list{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.card {
+    background-color: #3e3f40!important;
+    color: white!important;
+}
+.text-muted {
+    color: #878a8d!important;
+}
