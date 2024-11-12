@@ -14,8 +14,11 @@ body {
 }
 
 .card {
-    background-color: #3e3f40!important;
     color: white!important;
+    background-color: #2b2c2e!important;
+}
+.card:hover {
+    background-color: #3e3f40!important;
 }
 .text-muted {
     color: #878a8d!important;

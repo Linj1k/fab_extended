@@ -9,8 +9,8 @@
     "content_scripts": [
       {
         "matches": ["https://www.fab.com/*"],
-        "js": ["app/storage.js", "app/product.js"],
-        "css": []
+        "js": ["app/utils.js", "app/storage.js", "app/product.js"],
+        "css": ["app/styles.css"]
       }
     ],
     "icons": {
