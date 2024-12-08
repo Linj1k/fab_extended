@@ -9,8 +9,8 @@
     "content_scripts": [
       {
         "matches": ["https://www.fab.com/*"],
-        "js": ["app/utils.js", "app/storage.js", "app/product.js"],
-        "css": ["app/styles.css"]
+        "js": ["app/toastifyjs/toastify-js.js","app/utils.js", "app/storage.js", "app/favorite.js", "app/addToCart.js", "app/product.js"],
+        "css": ["app/toastifyjs/toastify.min.css","app/styles.css"]
       }
     ],
     "icons": {

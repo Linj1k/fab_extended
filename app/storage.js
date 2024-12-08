@@ -3,20 +3,20 @@ function initStorage() {
     chrome.storage.sync.get(['favorites'], function(result) {
         if (!result.favorites) {
             var favorites = getFavorites();
-            fabextLog('Favorites currently is ', result.favorites);
+            fabext_Log('Favorites currently is ', result.favorites);
             chrome.storage.sync.set({favorites: JSON.stringify(favorites)}, function() {
-                fabextLog('Favorites is set to ', favorites);
+                fabext_Log('Favorites is set to ', favorites);
             });
         } else {
             localStorage.setItem('favorites', result.favorites || JSON.stringify([]));
-            fabextLog('Favorites currently is ', JSON.parse(result.favorites));
+            fabext_Log('Favorites currently is ', JSON.parse(result.favorites));
         }
     });
 }
 function updateStorage() {
     var favorites = localStorage.getItem('favorites');
     chrome.storage.sync.set({favorites: favorites}, function() {
-        fabextLog('Favorites is set to ' + favorites);
+        fabext_Log('Favorites is set to ' + favorites);
     });
 
     var popup = document.querySelector('#favorite-popup');
@@ -27,7 +27,7 @@ function updateStorage() {
 }
 function clearStorage() {
     chrome.storage.sync.clear(function() {
-        fabextLog('Storage cleared');
+        fabext_Log('Storage cleared');
     });
     updateHeartButton(document.getElementById('product-heartButton'), window.location.href, true)
 }
@@ -47,7 +47,7 @@ function saveFavorite(heartButton,url,notify) {
             image: heartButton.dataset.image,
         });
 
-        fabextLog(favorites);
+        fabext_Log(favorites);
         localStorage.setItem('favorites', JSON.stringify(favorites));
 
         updateStorage()
