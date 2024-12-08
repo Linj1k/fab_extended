@@ -1,6 +1,10 @@
 const validFormat = [
-    { name: "Unreal Engine", value: "unreal-engine" },
+    { name: "Unreal", value: "unreal-engine" },
+    { name: "언리얼", value: "unreal-engine" },
+    { name: "虚幻引擎格式的徽标", value: "unreal-engine" },
+
     { name: "Unity", value: "unity" },
+
     { name: "UEFN", value: "uefn" },
 ];
 
@@ -9,10 +13,13 @@ function addTechnicalDetails() {
 
     const listingsFormat = document.querySelector('#listings-formats');
     if (listingsFormat) {
-        // find the Unreal Engine version (in img alt)
         const img = listingsFormat.querySelectorAll('img');
         img.forEach(function(image) {
-            const format = validFormat.find(format => image.alt.toLowerCase().includes(format.name.toLowerCase()));
+            var alt = image.alt.toLowerCase();
+            // html decode (&nbsp; -> ' ')
+            alt = alt.replace(/&nbsp;/g, " ");
+            
+            const format = validFormat.find(format => alt.includes(format.name.toLowerCase()));
             if (format) {
                 if (image.parentElement.querySelector('#product-technicalDetails') || image.parentElement.dataset.technicalDetails) return;
 
