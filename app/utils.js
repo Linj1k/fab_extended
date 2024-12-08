@@ -19,7 +19,7 @@ var heartFilledMdIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit 
 
 var addToCartIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--xs edsicon edsicon-shopping-cart" aria-hidden="true"></i>`
 
-var devmode = true;
+var devmode = false;
 
 function fabext_Log(...msg) {
     if (devmode) {
