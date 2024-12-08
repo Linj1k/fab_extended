@@ -2,15 +2,17 @@ function addElementsDom() {
     addFavoriteButtonProduct()
     AutoSelectLicense();
 
-    var productThumbnails = document.querySelectorAll('.fabkit-scale--radius-3.Vq2qCiz2');
+    var productThumbnails = document.querySelectorAll('.fabkit-scale--radius-3');
     productThumbnails.forEach(function(thumbnail) {
+        if (thumbnail.tagName !== 'DIV') return;
+
         addFavoriteButtonThumbnail(thumbnail)
         addToCartThumbnail(thumbnail)
     });
 }
 
 function AutoSelectLicense() {
-    var license = document.querySelector('.fabkit-Stack-root.fabkit-Stack--align_center.fabkit-Stack--justify_space-between.fabkit-InputContainer-root.fabkit-InputContainer--md.q2wDXY2x');
+    var license = document.querySelector('.fabkit-Stack-root.fabkit-Stack--align_center.fabkit-Stack--justify_space-between.fabkit-InputContainer-root.fabkit-InputContainer--md');
     if (license) {
         const parent = license.parentElement;
         if (parent.dataset.autoSelectLicense) return;

@@ -1,7 +1,9 @@
 function addToCartThumbnail(thumbnail) {
     if (thumbnail && thumbnail.querySelector('#thumbnail-addToCartButton') === null) {
-        var parent = thumbnail.parentNode;
-        var currentUrl = parent.querySelector('.fabkit-Thumbnail-overlay.h2KfmOpM').href;
+        var parent = thumbnail.parentElement;
+        var currentUrl = parent.querySelector('.fabkit-Thumbnail-overlay');
+        if (!currentUrl) return;
+        currentUrl = currentUrl.href;
         var uid = currentUrl.split('/').pop();
         
         var contentDiv = document.createElement("div");
@@ -15,12 +17,12 @@ function addToCartThumbnail(thumbnail) {
         iconDiv.classList.add("fabkit-Badge-root", "fabkit-Badge--filled", "fabkit-Badge--gray", "fabkit-Badge--md", "fabkit-Badge--iconOnly", "fabkit-Badge--blurify", "Nj5DrLsA", "jfHwYlH0", "MoIH083o");
 
         var addToCartButton = document.createElement("button");
-        var topRight = thumbnail.querySelector('.fabkit-Thumbnail-item.fabkit-Thumbnail--top-right.q2jjQjlm.YFuShsDk')
+        var topRight = thumbnail.querySelector('.fabkit-Thumbnail-item.fabkit-Thumbnail--top-right')
 
         // Create topRight div if it doesn't exist
         if (topRight === null) {
             var topRight = document.createElement("div");
-            topRight.classList.add("fabkit-Thumbnail-item", "fabkit-Thumbnail--top-right", "q2jjQjlm", "YFuShsDk");
+            topRight.classList.add("fabkit-Thumbnail-item", "fabkit-Thumbnail--top-right");
             thumbnail.appendChild(topRight);
         } else {
             contentDiv.classList.add("fabkit-Thumbnail-addToCartButton")
