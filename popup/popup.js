@@ -1,22 +1,26 @@
 chrome.storage.sync.get('favorites', function(data) {
-    console.log(data);
+    // Get the favorites from the storage
     var favorites = JSON.parse(data.favorites) || [];
 
+    // Update the amount of favorites
     var favAmount = document.getElementById('fav-amount');
     favAmount.textContent = favorites.length;
 
+    // Update the favorites list
     var favoritesList = document.getElementById('favorites-list');
     favoritesList.innerHTML = '';
+
     favorites.forEach(function(favorite) {
         const card = document.createElement('a');
-        card.href = favorite.url;
+        var url = favorite.url;
+
+        card.href = url;
         card.target = '_blank';
         card.classList.add('card', 'shadow-sm', 'p-2', 'mb-1', 'text-decoration-none');
 
         const cardRow = document.createElement('div');
         cardRow.classList.add('d-flex', 'align-items-center');
 
-        // Créer l'image
         const img = document.createElement('img');
         img.src = favorite.image;
         img.classList.add('img-fluid', 'rounded-start');
@@ -24,11 +28,12 @@ chrome.storage.sync.get('favorites', function(data) {
         img.alt = favorite.title;
         cardRow.appendChild(img);
 
-        // Créer la section de texte
         const textContainer = document.createElement('div');
         textContainer.classList.add('ms-3', 'flex-grow-1');
 
-        // Ajouter le titre
+        const cardHeader = document.createElement('div');
+        cardHeader.classList.add('d-flex', 'justify-content-between', 'align-items-center');
+
         const cardTitle = document.createElement('h5');
         cardTitle.classList.add('mb-2');
         cardTitle.textContent = favorite.title;
@@ -43,20 +48,18 @@ chrome.storage.sync.get('favorites', function(data) {
         icon.style.height = '1rem';
         button.appendChild(icon);
 
-        cardTitle.appendChild(button);
+        cardHeader.appendChild(cardTitle);
+        cardHeader.appendChild(button);
 
-        textContainer.appendChild(cardTitle);
+        textContainer.appendChild(cardHeader);
 
-        // Ajouter la description
         const cardText = document.createElement('p');
-        cardText.classList.add('text-muted', 'mt-2', 'mb-0');
+        cardText.classList.add('text-muted', 'mt-0', 'mb-0');
         cardText.textContent = favorite.category;
         textContainer.appendChild(cardText);
 
-        // Ajouter le conteneur de texte à la ligne
         cardRow.appendChild(textContainer);
 
-        // Ajouter la ligne à la carte
         card.appendChild(cardRow);
 
         favoritesList.appendChild(card);
@@ -67,7 +70,7 @@ chrome.storage.sync.get('favorites', function(data) {
                 return fav.id !== favorite.id;
             });
             chrome.storage.sync.set({favorites: JSON.stringify(favorites)}, function() {
-                console.log('Favorites is set to ' + JSON.stringify(favorites));
+                fabext_Log('Favorites is set to ' + JSON.stringify(favorites));
             });
             favAmount.textContent = favorites.length;
             card.remove();

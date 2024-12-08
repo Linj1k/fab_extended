@@ -1,23 +1,20 @@
 {
     "manifest_version": 3,
     "name": "Fab Extended",
-    "version": "1.0",
+    "version": "0.0.2",
     "description": "Improving the Fab.com experience",
     "permissions": [
-        "activeTab",
-        "storage",
-        "contextMenus"
+        "storage"
     ],
     "content_scripts": [
       {
         "matches": ["https://www.fab.com/*"],
-        "js": ["app/storage.js", "app/product.js"],
-        "css": []
+        "js": ["app/toastifyjs/toastify-js.js","app/utils.js", "app/storage.js", "app/favorite.js", "app/addToCart.js", "app/product.js"],
+        "css": ["app/toastifyjs/toastify.min.css","app/styles.css"]
       }
     ],
     "icons": {
-      "48": "icon.png",
-      "256": "icon.png"
+      "128": "icon.png"
     },
     "action": {
         "default_popup": "popup/popup.html"

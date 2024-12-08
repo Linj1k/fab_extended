@@ -1,28 +1,60 @@
-var url;
-setInterval(function() {
-    if (url !== window.location.href) {
-        var productTitle = document.querySelector('.fabkit-Typography-root.fabkit-typography--align-start.fabkit-typography--intent-primary.fabkit-Heading--lg.nkhb3MLS');
-        if (productTitle) {
-            url = window.location.href;
-            var heartButton = document.createElement("button");
-            heartButton.innerHTML = "❤️";
-            heartButton.id = "product-heartButton";
-            heartButton.classList.add("fabkit-Button-root", "fabkit-Button--icon", "fabkit-Button--sm", "fabkit-Button--ghost", "fabkit-MegaMenu-iconButton");
-            heartButton.type = "button";
-            heartButton.setAttribute("aria-label", "Ajouter aux favoris");
+function addElementsDom() {
+    addFavoriteButtonProduct()
 
-            heartButton.addEventListener('click', function() {
-                var currentUrl = window.location.href;
-                if (isInFavorite(currentUrl)) {
-                    removeFavorite(currentUrl,true);
-                } else {
-                    saveFavorite(currentUrl,true);
-                }
-                updateHeartButton(heartButton, currentUrl);
-            });
+    var productThumbnails = document.querySelectorAll('.fabkit-scale--radius-3.Vq2qCiz2');
+    productThumbnails.forEach(function(thumbnail) {
+        addFavoriteButtonThumbnail(thumbnail)
+        addToCartThumbnail(thumbnail)
+    });
+}
 
-            productTitle.appendChild(heartButton);
-            updateHeartButton()
+const observer = new MutationObserver((mutations) => {
+    /**
+     * Retrieves data preloaded in the DOM (I didn't use it in the end, but I prefer to keep the code just in case.)
+    */
+    // let data = document.querySelector("#js-dom-data-prefetched-data");
+    // if (data) {
+    //     data = data.innerHTML.replace('<!--', '').replace('-->', '');
+    //     // html decode
+    //     data = data.replace(/&#34;/g, '"')
+    //         .replace(/&#39;/g, "'")
+    //         .replace(/&lt;/g, '<')
+    //         .replace(/&gt;/g, '>')
+    //         .replace(/&amp;/g, '&')
+    //     try {
+    //         // Vérifie si la chaîne JSON est complète
+    //         if (data.trim().startsWith('{') && data.trim().endsWith('}')) {
+    //             FabData = JSON.parse(data);
+    //         } else {
+    //             throw new Error("La chaîne JSON est incomplète ou mal formée.");
+    //         }
+    //     } catch (e) {
+    //         console.error("Erreur lors du parsing JSON :", e);
+    //     }
+    //     // console.log( typeof FabData, FabData );
+    // }
+
+    let shouldAddElements = false;
+    for (let i = 0; i < mutations.length; i++) {
+        const mutation = mutations[i];
+        if (mutation.type === 'childList' || mutation.type === 'subtree') {
+            shouldAddElements = true;
+            break;
         }
     }
-},1000);
+
+    if (shouldAddElements) {
+        observer.disconnect();
+        addElementsDom();
+        addFavoriteButtonToNavbar();
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    }
+});
+
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
