@@ -15,8 +15,7 @@ This extension adds new features and improves the user experience on the Fab web
 
 - Button on thumbnails
   
-![Heart Button on Thumbnails](images/fab_extended_thumbnails.png)
-![Add to cart Button on Thumbnails](images/fab_extended_addToCartThumbnail.png)
+![Button on Thumbnails](images/fab_extended_thumbnails.png)
 
 - Button/Menu in navbar
 
