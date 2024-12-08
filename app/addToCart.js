@@ -68,6 +68,7 @@ Do you want to use the personal license?\n
                                 console.log(`Item ${data.title} (${data.uid}) added to cart`);
                             }
 
+                            addToCartButton.style.color = "#ADFF2F";
                             fabext_sendNotification(`<br>${data.title} added to cart!<p style='font-size: .5rem;'>To see the product in your cart, you need to refresh your page.</p>`,{
                                 escapeMarkup: false,
                             });
