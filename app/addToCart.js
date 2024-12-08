@@ -3,6 +3,7 @@ function addToCartThumbnail(thumbnail) {
         var parent = thumbnail.parentNode;
         var currentUrl = parent.querySelector('.fabkit-Thumbnail-overlay.h2KfmOpM').href;
         var uid = currentUrl.split('/').pop();
+        console.log(thumbnail.querySelector('.fabkit-Typography-root.fabkit-Typography--align-start.fabkit-Typography--intent-success.fabkit-Text--md.fabkit-Text--regular.fabkit-Stack-root.fabkit-Stack--align_center.fabkit-scale--gapX-spacing-1.fabkit-scale--gapY-spacing-1'))
         
         var contentDiv = document.createElement("div");
         contentDiv.classList.add("fabkit-Stack-root", "fabkit-Stack--align_center", "fabkit-scale--gapX-spacing-2", "fabkit-scale--gapY-spacing-2");
@@ -42,38 +43,63 @@ function addToCartThumbnail(thumbnail) {
         addToCartButton.addEventListener('click', function(e) {
             e.stopPropagation();
 
-            fabext_SendRequest("GET", "listings/"+uid, null, function(response) {
+            fabext_SendRequest('GET', 'users/me/acquired-content?listing_ids='+uid, null, function(response) {
                 if (response.readyState === 4 && response.status === 200) {
-                    var data = JSON.parse(response.responseText);
-                    console.log(data);
+                    var acquiredData = JSON.parse(response.responseText);
 
-                    var licenses = data.licenses;
-                    const personalLicense = licenses.find(license => license.slug === "personal");
-                    const professionalLicense = licenses.find(license => license.slug === "professional");
+                    if (acquiredData.length > 0) {
+                        const acquiredContent = acquiredData[0].acquired;
+                        if (acquiredContent) {
+                            fabext_sendNotification("This product is already in your library!");
+                            return;
+                        }
 
-                    console.log(personalLicense);
+                        
+                        fabext_SendRequest("GET", "listings/"+uid, null, function(response) {
+                            if (response.readyState === 4 && response.status === 200) {
+                                var listingsData = JSON.parse(response.responseText);
 
-                    var listingLicenseId = licenses.length === 1 ? licenses[0].listingLicenseId :
-                        confirm(`
+                                var licenses = listingsData.licenses;
+                                const personalLicense = licenses.find(license => license.slug === "personal");
+                                const professionalLicense = licenses.find(license => license.slug === "professional");
+
+                                var listingLicenseId = licenses.length === 1 ? licenses[0].listingLicenseId :
+                                    confirm(`
 Do you want to use the personal license?\n
 - Yes: Personal license (${personalLicense.priceTier.price} ${personalLicense.priceTier.currencyCode})
 - No: Professional license (${professionalLicense.priceTier.price} ${professionalLicense.priceTier.currencyCode})
 `) ? personalLicense.listingLicenseId : professionalLicense.listingLicenseId;
-                    
-                    fabext_SendRequest("POST", "cart/items", JSON.stringify({
-                        "listingLicense": listingLicenseId,
-                    }), function(response) {
-                        if (response.readyState === 4 && response.status === 201) {
-                            if (devmode) {
-                                console.log(`Item ${data.title} (${data.uid}) added to cart`);
-                            }
 
-                            addToCartButton.style.color = "#ADFF2F";
-                            fabext_sendNotification(`<br>${data.title} added to cart!<p style='font-size: .5rem;'>To see the product in your cart, you need to refresh your page.</p>`,{
-                                escapeMarkup: false,
-                            });
-                        }
-                    });
+                                fabext_SendRequest('GET', 'cart', null, function(response) {
+                                    if (response.readyState === 4 && response.status === 200) {
+                                        var CartData = JSON.parse(response.responseText);
+
+                                        // find if the item is already in the cart
+                                        var item = CartData.items.find(item => item.listingLicenseId === listingLicenseId);
+                                        if (item) {
+                                            fabext_sendNotification("This product is already in your cart!");
+                                            return;
+                                        }
+
+                                        fabext_SendRequest("POST", "cart/items", JSON.stringify({
+                                            "listingLicense": listingLicenseId,
+                                        }), function(response) {
+                                            if (response.readyState === 4 && response.status === 201) {
+                                                if (devmode) {
+                                                    console.log(`Item ${listingsData.title} (${listingsData.uid}) added to cart`);
+                                                }
+
+                                                addToCartButton.style.color = "#ADFF2F";
+                                                fabext_sendNotification(`<br>${listingsData.title} added to cart!<p style='font-size: .5rem;'>To see the product in your cart, you need to refresh your page.</p>`,{
+                                                    escapeMarkup: false,
+                                                });
+                                            }
+                                        });
+                                    }
+                                })
+                            }
+                        });
+                    }
                 }
             });
         });
