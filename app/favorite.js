@@ -136,7 +136,7 @@ function addFavoriteButtonToNavbar() {
 
 function addFavoriteButtonProduct() {
     if (document.getElementById('product-heartButton') === null) {
-        var productTitle = document.querySelector('.fabkit-Typography-root.fabkit-typography--align-start.fabkit-typography--intent-primary.fabkit-Heading--lg.nkhb3MLS');
+        var productTitle = document.querySelector('.fabkit-Stack-root.fabkit-Stack--align_start.fabkit-scale--gapX-layout-6.fabkit-scale--gapY-layout-6.fabkit-Stack--column > .fabkit-Typography-root.fabkit-Typography--align-start.fabkit-Typography--intent-primary.fabkit-Heading--lg');
         if (productTitle) {
             var currentDiv = productTitle.parentNode;
             
@@ -197,8 +197,13 @@ function addFavoriteButtonProduct() {
 
 function addFavoriteButtonThumbnail(thumbnail) {
     if (thumbnail && thumbnail.querySelector('#thumbnail-heartButton') === null) {
-        var parent = thumbnail.parentNode;
-        var currentUrl = parent.querySelector('.fabkit-Thumbnail-overlay.h2KfmOpM').href;
+        var parent = thumbnail.parentElement;
+        var currentUrl = parent.querySelector('.fabkit-Thumbnail-overlay');
+        if (!currentUrl) return;
+        currentUrl = currentUrl.href;
+
+        const categoryElement = parent.parentElement.querySelector('.fabkit-Typography-root.fabkit-Typography--align-start.fabkit-Typography--intent-secondary.fabkit-Text--md.fabkit-Text--regular.fabkit-Stack-root.fabkit-Stack--align_center.fabkit-scale--gapX-spacing-2.fabkit-scale--gapY-spacing-2');
+        if (!categoryElement) return;
         
         var contentDiv = document.createElement("div");
         contentDiv.classList.add("fabkit-Stack-root", "fabkit-Stack--align_center", "fabkit-scale--gapX-spacing-2", "fabkit-scale--gapY-spacing-2");
@@ -210,12 +215,12 @@ function addFavoriteButtonThumbnail(thumbnail) {
         iconDiv.classList.add("fabkit-Badge-root", "fabkit-Badge--filled", "fabkit-Badge--gray", "fabkit-Badge--md", "fabkit-Badge--iconOnly", "fabkit-Badge--blurify", "Nj5DrLsA", "jfHwYlH0", "MoIH083o");
 
         var heartButton = document.createElement("button");
-        var topRight = thumbnail.querySelector('.fabkit-Thumbnail-item.fabkit-Thumbnail--top-right.q2jjQjlm.YFuShsDk')
+        var topRight = thumbnail.querySelector('.fabkit-Thumbnail-item.fabkit-Thumbnail--top-right')
 
         // Create topRight div if it doesn't exist
         if (topRight === null) {
             var topRight = document.createElement("div");
-            topRight.classList.add("fabkit-Thumbnail-item", "fabkit-Thumbnail--top-right", "q2jjQjlm", "YFuShsDk");
+            topRight.classList.add("fabkit-Thumbnail-item", "fabkit-Thumbnail--top-right");
             thumbnail.appendChild(topRight);
         } else {
             contentDiv.classList.add("fabkit-Thumbnail-heartButton")
@@ -228,9 +233,9 @@ function addFavoriteButtonThumbnail(thumbnail) {
         heartButton.title = "Add to favorite";
 
         // Add data attributes to the heartButton
-        heartButton.dataset.category = parent.parentNode.querySelector('.fabkit-Typography-root.fabkit-Typography--align-start.fabkit-Typography--intent-secondary.fabkit-Text--md.fabkit-Text--regular.fabkit-Stack-root.fabkit-Stack--align_center.fabkit-scale--gapX-spacing-2.fabkit-scale--gapY-spacing-2').innerText;
+        heartButton.dataset.category = categoryElement.innerText;
         heartButton.dataset.category = heartButton.dataset.category.split('\n').pop();
-        heartButton.dataset.title = parent.parentNode.querySelector('.fabkit-Typography-ellipsisWrapper').innerText;
+        heartButton.dataset.title = parent.parentElement.querySelector('.fabkit-Typography-ellipsisWrapper').innerText;
         heartButton.dataset.image = parent.querySelector('img').src;
 
 
