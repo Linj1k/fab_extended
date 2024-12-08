@@ -1,3 +1,6 @@
+var FabAPIUrl = 'https://www.fab.com/i/';
+var FabData;
+
 var trashSVG = `<?xml version='1.0' encoding='iso-8859-1'?>
 <!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>
 <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
@@ -9,17 +12,68 @@ var trashSVG = `<?xml version='1.0' encoding='iso-8859-1'?>
     <path d="m212.155,95.415c-3.899-0.223-7.153,2.764-7.355,6.625l-9.184,175.829c-0.202,3.861 2.765,7.154 6.625,7.355 0.125,0.007 0.248,0.01 0.371,0.01 3.698,0 6.789-2.898 6.984-6.635l9.184-175.829c0.202-3.861-2.764-7.154-6.625-7.355z"/>
 </g>
 </svg>`
-var heartMdIcon = `<i class="fabkit-Icon-root fabkit-Icon--inherit fabkit-Icon--md fabicon-heart" aria-hidden="true"></i>`
-var heartIcon = `<i class="fabkit-Icon-root fabkit-Icon--inherit fabkit-Icon--xs fabicon-heart" aria-hidden="true"></i>`
-var heartFilledIcon = `<i class="fabkit-Icon-root fabkit-Icon--inherit fabkit-Icon--xs fabicon-heart-filled" aria-hidden="true"></i>`
-var heartFilledMdIcon = `<i class="fabkit-Icon-root fabkit-Icon--inherit fabkit-Icon--md fabicon-heart-filled" aria-hidden="true"></i>`
+var heartMdIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--md edsicon edsicon-heart" aria-hidden="true"></i>`
+var heartIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--xs edsicon edsicon-heart" aria-hidden="true"></i>`
+var heartFilledIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--xs edsicon edsicon-heart-filled" aria-hidden="true"></i>`
+var heartFilledMdIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--md edsicon edsicon-heart-filled" aria-hidden="true"></i>`
+
+var addToCartIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--xs edsicon edsicon-shopping-cart" aria-hidden="true"></i>`
 
 var devmode = false;
 
-function fabextLog(...msg) {
+function fabext_Log(...msg) {
     if (devmode) {
         console.log(msg);
     }
+}
+
+function fabext_GetCSRFToken() {
+    var cookie = document.cookie;
+    var csrfToken = cookie.match(/fab_csrftoken=([^;]+)/);
+    if (csrfToken) {
+        return csrfToken[1];
+    }
+    return null;
+}
+
+function fabext_SendRequest(method, url, data, callback) {
+    fabext_Log('[Fab Extended] Request:', method, url, data);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open(method, FabAPIUrl+url, true);
+    xhr.withCredentials = true;
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader("x-csrftoken", fabext_GetCSRFToken());
+    xhr.onreadystatechange = function() {
+        callback(xhr);
+
+        if (xhr.readyState === 4) {
+            fabext_Log('[Fab Extended] Response:', method, url, data, xhr.responseText);
+        }
+    };
+    xhr.send(data);
+}
+
+function fabext_sendNotification(text, customOptions) {
+    var defaultOptions = {
+        text: `Fab Extented:\n${text}`,
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        close: true,
+        offset: {
+            y: "5em"
+        },
+        style: {
+          background: "linear-gradient(to right, #404044, #101014)",
+          borderRadius: "6px",
+        },
+    }
+    if (customOptions) {
+        defaultOptions = Object.assign(defaultOptions, customOptions);
+    }
+
+    Toastify(defaultOptions).showToast();
 }
 
 console.log('[Fab Extended] loaded');
