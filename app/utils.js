@@ -37,9 +37,7 @@ function fabext_GetCSRFToken() {
 }
 
 function fabext_SendRequest(method, url, data, callback) {
-    if (devmode) {
-        console.log('[Fab Extended] Request:', method, url, data);
-    }
+    fabext_Log('[Fab Extended] Request:', method, url, data);
 
     var xhr = new XMLHttpRequest();
     xhr.open(method, FabAPIUrl+url, true);
@@ -49,8 +47,8 @@ function fabext_SendRequest(method, url, data, callback) {
     xhr.onreadystatechange = function() {
         callback(xhr);
 
-        if (devmode && xhr.readyState === 4) {
-            console.log('[Fab Extended] Response:', method, url, data, xhr.responseText);
+        if (xhr.readyState === 4) {
+            fabext_Log('[Fab Extended] Response:', method, url, data, xhr.responseText);
         }
     };
     xhr.send(data);

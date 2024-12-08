@@ -3,7 +3,6 @@ function addToCartThumbnail(thumbnail) {
         var parent = thumbnail.parentNode;
         var currentUrl = parent.querySelector('.fabkit-Thumbnail-overlay.h2KfmOpM').href;
         var uid = currentUrl.split('/').pop();
-        console.log(thumbnail.querySelector('.fabkit-Typography-root.fabkit-Typography--align-start.fabkit-Typography--intent-success.fabkit-Text--md.fabkit-Text--regular.fabkit-Stack-root.fabkit-Stack--align_center.fabkit-scale--gapX-spacing-1.fabkit-scale--gapY-spacing-1'))
         
         var contentDiv = document.createElement("div");
         contentDiv.classList.add("fabkit-Stack-root", "fabkit-Stack--align_center", "fabkit-scale--gapX-spacing-2", "fabkit-scale--gapY-spacing-2");
@@ -85,9 +84,7 @@ Do you want to use the personal license?\n
                                             "listingLicense": listingLicenseId,
                                         }), function(response) {
                                             if (response.readyState === 4 && response.status === 201) {
-                                                if (devmode) {
-                                                    console.log(`Item ${listingsData.title} (${listingsData.uid}) added to cart`);
-                                                }
+                                                fabext_Log(`Item ${listingsData.title} (${listingsData.uid}) added to cart`);
 
                                                 addToCartButton.style.color = "#ADFF2F";
                                                 fabext_sendNotification(`<br>${listingsData.title} added to cart!<p style='font-size: .5rem;'>To see the product in your cart, you need to refresh your page.</p>`,{

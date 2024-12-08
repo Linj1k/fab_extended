@@ -62,16 +62,16 @@ const observer = new MutationObserver((mutations) => {
     //         .replace(/&gt;/g, '>')
     //         .replace(/&amp;/g, '&')
     //     try {
-    //         // Vérifie si la chaîne JSON est complète
+    //         // Checks if the JSON string is complete
     //         if (data.trim().startsWith('{') && data.trim().endsWith('}')) {
     //             FabData = JSON.parse(data);
     //         } else {
-    //             throw new Error("La chaîne JSON est incomplète ou mal formée.");
+    //             throw new Error("The JSON string is incomplete or badly formed.");
     //         }
     //     } catch (e) {
-    //         console.error("Erreur lors du parsing JSON :", e);
+    //         console.error("JSON parsing error :", e);
     //     }
-    //     // console.log( typeof FabData, FabData );
+    //     fabext_Log( typeof FabData, FabData );
     // }
 
     let shouldAddElements = false;
