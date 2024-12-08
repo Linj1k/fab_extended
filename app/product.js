@@ -1,11 +1,51 @@
 function addElementsDom() {
     addFavoriteButtonProduct()
+    AutoSelectLicense();
 
     var productThumbnails = document.querySelectorAll('.fabkit-scale--radius-3.Vq2qCiz2');
     productThumbnails.forEach(function(thumbnail) {
         addFavoriteButtonThumbnail(thumbnail)
         addToCartThumbnail(thumbnail)
     });
+}
+
+function AutoSelectLicense() {
+    var license = document.querySelector('.fabkit-Stack-root.fabkit-Stack--align_center.fabkit-Stack--justify_space-between.fabkit-InputContainer-root.fabkit-InputContainer--md.q2wDXY2x');
+    if (license) {
+        const parent = license.parentElement;
+        if (parent.dataset.autoSelectLicense) return;
+        var uid = (window.location.href).split('/').pop();
+
+        if (!parent.dataset.autoSelectLicenseRequested) {
+            parent.dataset.autoSelectLicenseRequested = true;
+            fabext_SendRequest("GET", "listings/"+uid, null, function(response) {
+                if (response.readyState === 4 && response.status === 200) {
+                    var listingsData = JSON.parse(response.responseText);
+    
+                    var licenses = listingsData.licenses;
+                    const personalLicenseIndex = licenses.findIndex(license => license.slug === "personal");
+
+                    parent.dataset.autoSelectLicenseIndex = personalLicenseIndex;
+                    license.click();
+                }
+            });
+        }
+
+        if (license.getAttribute('aria-expanded') !== 'false') {
+            var licenseOptions = document.querySelector('.fabkit-Dropdown-container');
+            if (licenseOptions) {
+                licenseOptions = licenseOptions.children[0];
+
+                const list = licenseOptions.children[1];
+                if (list.children[parent.dataset.autoSelectLicenseIndex]) {
+                    list.children[parent.dataset.autoSelectLicenseIndex].click();
+                } else {
+                    list.children[0].click();
+                }
+                parent.dataset.autoSelectLicense = true;
+            }
+        }
+    }
 }
 
 const observer = new MutationObserver((mutations) => {
