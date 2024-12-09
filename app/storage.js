@@ -68,7 +68,10 @@ function saveFavorite(heartButton,url,notify) {
 function removeFavorite(url,notify) {
     var favorites = JSON.parse(localStorage.getItem('favorites')) || [];
     if (isInFavorite(url)) {
-        var index = favorites.indexOf(url);
+        var index = favorites.findIndex(function(favorite) {
+            return favorite.url === url;
+        });
+        console.log(url, index);
         favorites.splice(index, 1);
         localStorage.setItem('favorites', JSON.stringify(favorites));
 

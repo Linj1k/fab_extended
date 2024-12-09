@@ -75,6 +75,7 @@ function createFavoritePopup() {
             removeButton.innerHTML = trashIcon;
 
             removeButton.title = "Remove from favorites";
+            removeButton.dataset.url = favorite.url;
             removeButton.addEventListener('click', function(e) {
                 e.preventDefault();
                 removeFavorite(favorite.url,true);
