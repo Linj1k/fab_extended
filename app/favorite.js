@@ -250,6 +250,7 @@ function addFavoriteButtonThumbnail(thumbnail) {
             }
             updateHeartButton(heartButton, currentUrl);
         });
+        updateHeartButton(heartButton, currentUrl)
 
 
         iconDiv.appendChild(heartButton);
