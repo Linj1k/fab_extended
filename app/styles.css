@@ -37,7 +37,8 @@
 }
 
 .favorite-popup-header button:hover {
-    border-color: red;
+    border-color: #f00;
+    color: #f00;
 }
 
 .favorite-popup-item {
@@ -76,6 +77,10 @@
     color: #8d8888;
 }
 
+.favorite-popup-item-created_at {
+    font-size: 0.55rem!important;
+}
+
 .favorite-popup-item-header {
     display: flex;
     justify-content: space-between;
@@ -85,7 +90,7 @@
 
 .favorite-popup-item-header span {
     color: white;
-    font-size: 1rem!important;
+    font-size: .8rem!important;
     font-weight: bold!important;
 }
 
@@ -98,5 +103,6 @@
 }
 
 .favorite-popup-item-header button:hover {
-    border-color: red;
+    border-color: #f00;
+    color: #f00;
 }

@@ -23,3 +23,12 @@ body {
 .text-muted {
     color: #878a8d!important;
 }
+.fs-7 {
+    font-size: 0.9rem!important;
+}
+.fs-8 {
+    font-size: 0.875rem!important;
+}
+.fs-9 {
+    font-size: 0.6rem!important;
+}

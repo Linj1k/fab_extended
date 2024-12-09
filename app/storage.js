@@ -8,8 +8,19 @@ function initStorage() {
                 fabext_Log('Favorites is set to ', favorites);
             });
         } else {
-            localStorage.setItem('favorites', result.favorites || JSON.stringify([]));
-            fabext_Log('Favorites currently is ', JSON.parse(result.favorites));
+            // check if favorite have created_at field or not and add if not
+            var favorites = JSON.parse(result.favorites) || [];
+            if (favorites.length > 0) {
+                favorites = favorites.map(function(favorite) {
+                    if (!favorite.created_at) {
+                        favorite.created_at = new Date().toISOString();
+                    }
+                    return favorite;
+                });
+            }
+
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            fabext_Log('Favorites currently is ', favorites);
         }
     });
 }
@@ -45,6 +56,7 @@ function saveFavorite(heartButton,url,notify) {
             title: heartButton.dataset.title,
             category: heartButton.dataset.category,
             image: heartButton.dataset.image,
+            created_at: new Date().toISOString()
         });
 
         fabext_Log(favorites);
@@ -56,7 +68,10 @@ function saveFavorite(heartButton,url,notify) {
 function removeFavorite(url,notify) {
     var favorites = JSON.parse(localStorage.getItem('favorites')) || [];
     if (isInFavorite(url)) {
-        var index = favorites.indexOf(url);
+        var index = favorites.findIndex(function(favorite) {
+            return favorite.url === url;
+        });
+        console.log(url, index);
         favorites.splice(index, 1);
         localStorage.setItem('favorites', JSON.stringify(favorites));
 
