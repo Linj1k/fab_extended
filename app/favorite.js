@@ -15,7 +15,7 @@ function createFavoritePopup() {
 
     // Create the clear button in the header
     var clearButton = document.createElement("button");
-    clearButton.innerHTML = trashSVG;
+    clearButton.innerHTML = trashIcon;
     clearButton.title = "Clear favorites";
     clearButton.addEventListener('click', function() {
         if (confirm('Are you sure you want to clear your favorites?')) {
@@ -33,6 +33,12 @@ function createFavoritePopup() {
     popup.load = function() {
         contentDiv.innerHTML = "";
         var favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+        // sort favorites by created_at
+        favorites.sort(function(a, b) {
+            return new Date(b.created_at) - new Date(a.created_at);
+        });
+
         favorites.forEach(function(favorite) {
             var item = document.createElement("a");
             item.classList.add("favorite-popup-item")
@@ -66,7 +72,7 @@ function createFavoritePopup() {
 
             // Create the remove button in the header
             var removeButton = document.createElement("button");
-            removeButton.innerHTML = trashSVG;
+            removeButton.innerHTML = trashIcon;
 
             removeButton.title = "Remove from favorites";
             removeButton.addEventListener('click', function(e) {
@@ -80,6 +86,11 @@ function createFavoritePopup() {
             var category = document.createElement("span");
             category.innerHTML = favorite.category;
             content.appendChild(category);
+
+            var created_at = document.createElement("span");
+            created_at.classList.add("favorite-popup-item-created_at");
+            created_at.innerHTML = "Favorited on: "+(new Date(favorite.created_at).toLocaleString());
+            content.appendChild(created_at);
 
             contentDiv.appendChild(item);
         });

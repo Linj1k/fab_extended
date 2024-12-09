@@ -10,6 +10,10 @@ chrome.storage.sync.get('favorites', function(data) {
     var favoritesList = document.getElementById('favorites-list');
     favoritesList.innerHTML = '';
 
+    favorites.sort(function(a, b) {
+        return new Date(b.created_at) - new Date(a.created_at);
+    });
+
     favorites.forEach(function(favorite) {
         const card = document.createElement('a');
         var url = favorite.url;
@@ -35,7 +39,7 @@ chrome.storage.sync.get('favorites', function(data) {
         cardHeader.classList.add('d-flex', 'justify-content-between', 'align-items-center');
 
         const cardTitle = document.createElement('h5');
-        cardTitle.classList.add('mb-2');
+        cardTitle.classList.add('mb-1', "fs-7");
         cardTitle.textContent = favorite.title;
 
         const button = document.createElement('button');
@@ -54,9 +58,14 @@ chrome.storage.sync.get('favorites', function(data) {
         textContainer.appendChild(cardHeader);
 
         const cardText = document.createElement('p');
-        cardText.classList.add('text-muted', 'mt-0', 'mb-0');
+        cardText.classList.add('text-muted', 'mt-0', 'mb-0', 'fs-8');
         cardText.textContent = favorite.category;
         textContainer.appendChild(cardText);
+
+        const cardCreatedAt = document.createElement('p');
+        cardCreatedAt.classList.add('text-muted', 'mt-0', 'mb-0', 'fs-9');
+        cardCreatedAt.textContent = "Favorited on: "+(new Date(favorite.created_at).toLocaleString());
+        textContainer.appendChild(cardCreatedAt);
 
         cardRow.appendChild(textContainer);
 
