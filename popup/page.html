@@ -6,19 +6,16 @@
     <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" type="text/css" href="popup.css">
 </head>
-<body class="overflow-hidden">
+<body class="w-100">
     <div class="d-flex mb-2 align-items-center justify-content-between">
-        <h1>Favorites (<span id="fav-amount">0</span>)</h1>
-        <div>
-            <a href="https://www.fab.com/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary text-white fs-9">Fab.com</a>
-            <button class="btn btn-outline-secondary ms-1 text-white fs-9" id="openInNewTab">Open in new tab</button>
-        </div>
+        <h1>Fab Extended - Favorites (<span id="fav-amount">0</span>)</h1>
+        <a href="https://www.fab.com/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary ms-1 text-white">Fab.com</a>
     </div>
     <!-- search bar -->
     <div class="input-group mb-3">
         <input type="text" class="form-control bg-outline-secondary" id="search-input" placeholder="Search for a product, category, date">
     </div>
-    <ul id="favorites-list" class="overflow-auto" style="height: 450px;">
+    <ul id="favorites-list">
 
     </ul>
     <script src="popup.js"></script>

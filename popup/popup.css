@@ -32,3 +32,13 @@ body {
 .fs-9 {
     font-size: 0.6rem!important;
 }
+input {
+    color: white!important;
+    background-color: #2b2c2e!important;
+}
+input::placeholder {
+    color: #878a8d!important;
+}
+input:focus {
+    background-color: #3e3f40!important;
+}

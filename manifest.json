@@ -13,10 +13,13 @@
         "css": ["app/toastifyjs/toastify.min.css","app/styles.css"]
       }
     ],
+    "background": {
+      "service_worker": "app/background.js"
+    },
     "icons": {
       "128": "icon.png"
     },
     "action": {
-        "default_popup": "popup/popup.html"
+      "default_popup": "popup/popup.html"
     }
   }

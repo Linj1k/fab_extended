@@ -13,9 +13,23 @@ function createFavoritePopup() {
     title.innerHTML = "Favorites";
     headerDiv.appendChild(title);
 
+    var headerButtons = document.createElement("div");
+    headerButtons.classList.add("favorite-popup-header-buttons");
+    headerDiv.appendChild(headerButtons);
+
+    // add button to open favorites in a new tab in rigth of the header
+    var openButton = document.createElement("button");
+    openButton.innerHTML = openIcon;
+    openButton.title = "Open favorites in a new tab";
+    openButton.addEventListener('click', function() {
+        chrome.runtime.sendMessage({action: 'open-favorites'});
+    });
+    headerButtons.appendChild(openButton);
+
     // Create the clear button in the header
     var clearButton = document.createElement("button");
     clearButton.innerHTML = trashIcon;
+    clearButton.classList.add("favorite-popup-clear-button");
     clearButton.title = "Clear favorites";
     clearButton.addEventListener('click', function() {
         if (confirm('Are you sure you want to clear your favorites?')) {
@@ -23,7 +37,7 @@ function createFavoritePopup() {
             updateStorage();
         }
     });
-    headerDiv.appendChild(clearButton);
+    headerButtons.appendChild(clearButton);
 
     var contentDiv = document.createElement("div");
     contentDiv.classList.add("favorite-popup-content");
@@ -125,7 +139,7 @@ function addFavoriteButtonToNavbar() {
             favoriteButton.addEventListener('mouseleave', function() {
                 hideTimeout = setTimeout(function() {
                     popup.style.display = 'none';
-                }, 300);
+                }, 100);
             });
 
             // Add event listener to the popup to show or hide the popup
@@ -137,7 +151,7 @@ function addFavoriteButtonToNavbar() {
             popup.addEventListener('mouseleave', function() {
                 hideTimeout = setTimeout(function() {
                     popup.style.display = 'none';
-                }, 300);
+                }, 100);
             });
 
             actions.insertBefore(favoriteButton, actions.firstChild);
