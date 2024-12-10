@@ -1,8 +1,11 @@
 function addElementsDom() {
-    addFavoriteButtonProduct()
-    AutoSelectLicense();
+    if(window.location.href.includes("/listings/")) {
+        addFavoriteButtonProduct()
+        AutoSelectLicense();
+        searchForVideo();
+    }
 
-    var productThumbnails = document.querySelectorAll('.fabkit-scale--radius-3');
+    var productThumbnails = document.querySelectorAll('.fabkit-Stack-root.fabkit-scale--gapX-layout-3.fabkit-scale--gapY-layout-3.fabkit-Stack--column > .fabkit-scale--radius-3');
     productThumbnails.forEach(function(thumbnail) {
         if (thumbnail.tagName !== 'DIV') return;
 
@@ -48,6 +51,149 @@ function AutoSelectLicense() {
             }
         }
     }
+}
+
+var searchForVideoTimeout = null;
+function searchForVideo() {
+    clearTimeout(searchForVideoTimeout);
+    searchForVideoTimeout = setTimeout(() => {
+        var DescriptionDiv = document.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-layout-5.fabkit-scale--gapY-layout-5.fabkit-Stack--column');
+
+        if (DescriptionDiv) {
+            var carouselDiv = document.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-layout-6.fabkit-scale--gapY-layout-6.fabkit-Stack--column');
+            var carouselBig = carouselDiv.children[0];
+            var carousel = carouselDiv.children[1];
+            if (!carousel) {
+                carousel = document.createElement('div');
+                carousel.className = "fabkit-Stack-root fabkit-Stack--align_center fabkit-scale--gapX-layout-4 fabkit-scale--gapY-layout-4 fabkit-Stack--fullWidth _lPWHTqD";
+                carouselDiv.appendChild(carousel);
+
+                const carouselOl = document.createElement('ol');
+                carouselOl.className = "fabkit-Stack-root fabkit-Stack--align_center fabkit-scale--gapX-layout-4 fabkit-scale--gapY-layout-4 fabkit-Stack--fullWidth gxEZLyeW";
+                carousel.appendChild(carouselOl);
+                carousel = carouselOl;
+                
+                // copy the image from big carousel to the small carousel
+                var img = carouselBig.querySelector('img');
+                if (img) {
+                    var li = document.createElement('li');
+                    var div = document.createElement('div');
+                    div.className = "fabkit-Thumbnail-root fabkit-Thumbnail--16/9 fabkit-scale--radius-2 FJXTLkFZ";
+                    div.style.position = "relative";
+                    li.appendChild(div);
+                    var imgCopy = img.cloneNode(true);
+                    div.appendChild(imgCopy);
+
+                    // add a div to block the image
+                    var divBlock = document.createElement('div');
+                    divBlock.style.position = "absolute";
+                    divBlock.style.top = "0";
+                    divBlock.style.left = "0";
+                    divBlock.style.width = "100%";
+                    divBlock.style.height = "100%";
+                    divBlock.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        carouselBig = carouselDiv.children[0];
+                        while (carouselBig.firstChild) {
+                            carouselBig.removeChild(carouselBig.firstChild);
+                        }
+
+                        var img = imgCopy.cloneNode(true);
+                        carouselBig.appendChild(img);
+                    };
+                    div.appendChild(divBlock);
+
+                    carousel.appendChild(li);
+                }
+            } else {
+                carousel = carousel.querySelector('ol');
+            }
+            // search all the links in the description
+            const videoToAppend = [];
+
+            var links = DescriptionDiv.querySelectorAll('a');
+            links.forEach(function(link) {
+                if (link.dataset.searchForVideo) return;
+                var href = link.href;
+                var embed = getEmbededVideoId(href)
+
+                if (embed && embed.link) {
+                    // add the icon to the link
+                    link.innerHTML = VideoIcon + link.innerHTML;
+                    link.dataset.searchForVideo = true;
+
+                    // add the video to the carousel
+                    var liVdeo = document.createElement('li');
+
+                    var divVideo = document.createElement('div');
+                    divVideo.className = "fabkit-Thumbnail-root fabkit-Thumbnail--16/9 fabkit-scale--radius-2 FJXTLkFZ";
+                    divVideo.style.position = "relative";
+                    liVdeo.appendChild(divVideo);
+
+                    if (embed.type === 'soundcloud') {
+                        var soundcloudIcon = document.createElement('img');
+                        soundcloudIcon.src = "https://a-v2.sndcdn.com/assets/images/brand-1b72dd82.svg";
+                        soundcloudIcon.style.position = "absolute";
+                        soundcloudIcon.style.top = "0";
+                        soundcloudIcon.style.left = "0";
+                        soundcloudIcon.style.width = "100%";
+                        soundcloudIcon.style.height = "100%";
+                        soundcloudIcon.style.padding = "20px";
+                        soundcloudIcon.style.objectFit = "contain";
+                        divVideo.appendChild(soundcloudIcon);
+                    } else {
+                        var video = document.createElement('iframe');
+                        video.src = embed.link;
+                        video.title = "Video player";
+                        video.frameborder = "0";
+                        video.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+                        video.referrerpolicy = "strict-origin-when-cross-origin";
+                        divVideo.appendChild(video);
+                    }
+
+                    // add a div to block the video
+                    var divBlock = document.createElement('div');
+                    divBlock.style.position = "absolute";
+                    divBlock.style.top = "0";
+                    divBlock.style.left = "0";
+                    divBlock.style.width = "100%";
+                    divBlock.style.height = "100%";
+                    divBlock.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        carouselBig = carouselDiv.children[0];
+                        while (carouselBig.firstChild) {
+                            carouselBig.removeChild(carouselBig.firstChild);
+                        }
+
+                        var video = document.createElement('iframe');
+                        video.style.width = "100%";
+                        video.style.height = "100%";
+                        video.src = embed.link;
+                        video.title = "Video player";
+                        video.frameborder = "0";
+                        video.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+                        video.referrerpolicy = "strict-origin-when-cross-origin";
+                        video.allowFullscreen = true;
+                        carouselBig.appendChild(video);
+                    };
+                    divVideo.appendChild(divBlock);
+
+                    videoToAppend.push(liVdeo);
+                }
+            });
+
+            if (videoToAppend.length > 0) {
+                // add the video to the carousel (revert the order)
+                videoToAppend.reverse().forEach(function(video) {
+                    carousel.insertBefore(video, carousel.firstChild);
+                });
+            }
+        }
+    }, 100);
 }
 
 const observer = new MutationObserver((mutations) => {

@@ -6,8 +6,52 @@ const heartMdIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabk
 const heartIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--xs edsicon edsicon-heart" aria-hidden="true"></i>`
 const heartFilledIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--xs edsicon edsicon-heart-filled" aria-hidden="true"></i>`
 const heartFilledMdIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--md edsicon edsicon-heart-filled" aria-hidden="true"></i>`
+const openIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--md edsicon edsicon-link" aria-hidden="true"></i>`
+const VideoIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--md edsicon edsicon-video" aria-hidden="true"></i>`
 
 const addToCartIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--xs edsicon edsicon-shopping-cart" aria-hidden="true"></i>`
+
+function getEmbededVideoId(href) {
+    var link = null;
+    var type = null;
+    
+    // regex for youtube
+    var youtube = href.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/|playlist\?list=)|youtu\.be\/)([^&?#]+)/);
+    if (youtube) {
+        type = 'youtube';
+        if (href.includes('list=')) {
+            link = "https://www.youtube.com/embed/videoseries?list=" + youtube[1];
+        } else {
+            link = "https://www.youtube.com/embed/" + youtube[1];
+        }
+    }
+
+    // regex for vimeo
+    var vimeo = href.match(/(?:https?:\/\/)?(?:www\.)?vimeo\.com\/(\d+)(?:\?.*)?$/);
+    if (vimeo && !href.includes('vimeo.com/album/')) {
+        type = 'vimeo';
+        link = "https://player.vimeo.com/video/"+vimeo[1];
+    }
+
+    // regex for dailymotion
+    var dailymotion = href.match(/(?:https?:\/\/)?(?:www\.)?dailymotion\.com\/video\/(\w+)/);
+    if (dailymotion) {
+        type = 'dailymotion';
+        link = "https://geo.dailymotion.com/player.html?video="+dailymotion[1];
+    }
+
+    // regex for soundcloud
+    var soundcloud = href.match(/(?:https?:\/\/)?(?:www\.)?soundcloud\.com\/([\w-]+)\/([\w-]+)/);
+    if (soundcloud) {
+        type = 'soundcloud';
+        link = "https://w.soundcloud.com/player/?url="+href;
+    }
+    
+    return {
+        type: type,
+        link: link
+    };
+}
 
 var devmode = false;
 
