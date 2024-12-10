@@ -177,6 +177,7 @@ function searchForVideo() {
                         video.frameborder = "0";
                         video.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
                         video.referrerpolicy = "strict-origin-when-cross-origin";
+                        video.allowFullscreen = true;
                         carouselBig.appendChild(video);
                     };
                     divVideo.appendChild(divBlock);
