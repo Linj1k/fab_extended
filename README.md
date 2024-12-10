@@ -2,16 +2,18 @@
 This extension adds new features and improves the user experience on the Fab website.
 
 ## Features
-- Favorites (Button on product page, Button on thumbnails, Button/Menu in navbar)
+- Favorites (Button on product page, Button on thumbnails, Button/Menu in navbar, Search bar)
 - Add To Cart button on thumbnails
 - Bring back Technical Details on file format
 - Auto-select License (Automatically selects the personal license, if this is not possible, the first license will be selected)
+- Video Player (Get videos from a product description to display directly in the carousel with other images)
 
 ## Images
-- Button on product page
+- Product page
 
 ![Add heart button on product](images/fab_extended_product.png)
 ![Technical Details](images/fab_extended_technicaldetails.png)
+![Video Player](images/fab_extended_videoplayer.png)
 
 - Button on thumbnails
   
