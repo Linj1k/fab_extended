@@ -79,7 +79,7 @@ chrome.storage.sync.get('favorites', function(data) {
                 return fav.id !== favorite.id;
             });
             chrome.storage.sync.set({favorites: JSON.stringify(favorites)}, function() {
-                fabext_Log('Favorites is set to ' + JSON.stringify(favorites));
+                console.log('Favorites is set to ' + JSON.stringify(favorites));
             });
             favAmount.textContent = favorites.length;
             card.remove();
