@@ -5,7 +5,7 @@ function addElementsDom() {
         searchForVideo();
     }
 
-    var productThumbnails = document.querySelectorAll('.fabkit-scale--radius-3');
+    var productThumbnails = document.querySelectorAll('.fabkit-Stack-root.fabkit-scale--gapX-layout-3.fabkit-scale--gapY-layout-3.fabkit-Stack--column > .fabkit-scale--radius-3');
     productThumbnails.forEach(function(thumbnail) {
         if (thumbnail.tagName !== 'DIV') return;
 

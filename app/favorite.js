@@ -246,7 +246,7 @@ function addFavoriteButtonThumbnail(thumbnail) {
         // Create topRight div if it doesn't exist
         if (topRight === null) {
             var topRight = document.createElement("div");
-            topRight.classList.add("fabkit-Thumbnail-item", "fabkit-Thumbnail--top-right");
+            topRight.classList.add("fabkit-Thumbnail-item", "fabkit-Thumbnail--top-right",  "q2jjQjlm", "YFuShsDk");
             thumbnail.appendChild(topRight);
         } else {
             contentDiv.classList.add("fabkit-Thumbnail-heartButton")
