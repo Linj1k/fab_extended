@@ -1,3 +1,7 @@
+// const Version = chrome.runtime.getManifest().version;
+const Version = "0.1.3";
+var GithubManifest;
+
 var FabAPIUrl = 'https://www.fab.com/i/';
 var FabData;
 
@@ -18,10 +22,11 @@ function getEmbededVideoId(href) {
     // regex for youtube
     var youtube = href.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/|playlist\?list=)|youtu\.be\/)([^&?#]+)/);
     if (youtube) {
-        type = 'youtube';
         if (href.includes('list=')) {
             link = "https://www.youtube.com/embed/videoseries?list=" + youtube[1];
+            type = 'youtube_playlist';
         } else {
+            type = 'youtube';
             link = "https://www.youtube.com/embed/" + youtube[1];
         }
     }
@@ -90,7 +95,7 @@ function fabext_SendRequest(method, url, data, callback) {
 
 function fabext_sendNotification(text, customOptions) {
     var defaultOptions = {
-        text: `Fab Extented:\n${text}`,
+        text: `Fab Extented <span style='font-size: .65rem;'>${Version}</span><br>${text}`,
         duration: 3000,
         gravity: "top",
         position: "right",
@@ -102,6 +107,7 @@ function fabext_sendNotification(text, customOptions) {
           background: "linear-gradient(to right, #404044, #101014)",
           borderRadius: "6px",
         },
+        escapeMarkup: false,
     }
     if (customOptions) {
         defaultOptions = Object.assign(defaultOptions, customOptions);
@@ -110,4 +116,35 @@ function fabext_sendNotification(text, customOptions) {
     Toastify(defaultOptions).showToast();
 }
 
+function fabext_checkUpToDate() {
+    console.log('[Fab Extended] Checking for updates');
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'https://raw.githubusercontent.com/Linj1k/fab_extended/refs/heads/main/manifest.json', true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            var response = JSON.parse(xhr.responseText);
+            GithubManifest = response
+
+            if (response.version != Version) {
+                console.log('[Fab Extended] New version available:', response.version);
+
+                var lastVersion = localStorage.getItem('fabext_lastVersion');
+                if (lastVersion != response.version) {
+                    localStorage.setItem('fabext_lastVersion', response.version);
+                    fabext_sendNotification(`A new update will be available soon: ${response.version}`, {
+                        onClick: function() {
+                            window.open('https://github.com/Linj1k/fab_extended/releases');
+                        }
+                    });
+                }
+            } else {
+                console.log('[Fab Extended] Up to date', response.version);
+            }
+        }
+    };
+    xhr.send();
+}
+
 console.log('[Fab Extended] loaded');
+fabext_checkUpToDate();

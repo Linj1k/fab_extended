@@ -1,8 +1,29 @@
+var currentProductData = null;
 function addElementsDom() {
     if(window.location.href.includes("/listings/")) {
         addFavoriteButtonProduct()
-        AutoSelectLicense();
         searchForVideo();
+
+        var aSideProduct = document.querySelector('aside > .fabkit-Surface-root.fabkit-Surface--hideOverflow.fabkit-scale--radius-4.fabkit-Stack-root.fabkit-Stack--column');
+        if (aSideProduct) {
+            if (aSideProduct.dataset.fabext_product_data) {
+                if (aSideProduct.dataset.fabext_product_data_loaded) {
+                    AutoSelectLicense();
+                }
+                return
+            };
+
+            var uid = (window.location.href).split('/').pop();
+            aSideProduct.dataset.fabext_product_data = true;
+            fabext_SendRequest("GET", "listings/"+uid, null, function(response) {
+                if (response.readyState === 4 && response.status === 200) {
+                    currentProductData = JSON.parse(response.responseText);
+                    console.log(currentProductData);
+                    AutoSelectLicense();
+                    aSideProduct.dataset.fabext_product_data_loaded = true;
+                }
+            });
+        }
     }
 
     var productThumbnails = document.querySelectorAll('.fabkit-Stack-root.fabkit-scale--gapX-layout-3.fabkit-scale--gapY-layout-3.fabkit-Stack--column > .fabkit-scale--radius-3');
@@ -19,22 +40,6 @@ function AutoSelectLicense() {
     if (license) {
         const parent = license.parentElement;
         if (parent.dataset.autoSelectLicense) return;
-        var uid = (window.location.href).split('/').pop();
-
-        if (!parent.dataset.autoSelectLicenseRequested) {
-            parent.dataset.autoSelectLicenseRequested = true;
-            fabext_SendRequest("GET", "listings/"+uid, null, function(response) {
-                if (response.readyState === 4 && response.status === 200) {
-                    var listingsData = JSON.parse(response.responseText);
-    
-                    var licenses = listingsData.licenses;
-                    const personalLicenseIndex = licenses.findIndex(license => license.slug === "personal");
-
-                    parent.dataset.autoSelectLicenseIndex = personalLicenseIndex;
-                    license.click();
-                }
-            });
-        }
 
         if (license.getAttribute('aria-expanded') !== 'false') {
             var licenseOptions = document.querySelector('.fabkit-Dropdown-container');
@@ -49,6 +54,12 @@ function AutoSelectLicense() {
                 }
                 parent.dataset.autoSelectLicense = true;
             }
+        } else {
+            var licenses = currentProductData.licenses;
+            const personalLicenseIndex = licenses.findIndex(license => license.slug === "personal");
+
+            parent.dataset.autoSelectLicenseIndex = personalLicenseIndex;
+            license.click();
         }
     }
 }
@@ -117,6 +128,7 @@ function searchForVideo() {
             links.forEach(function(link) {
                 if (link.dataset.searchForVideo) return;
                 var href = link.href;
+                var text = link.innerText;
                 var embed = getEmbededVideoId(href)
 
                 if (embed && embed.link) {
@@ -147,10 +159,37 @@ function searchForVideo() {
                         var video = document.createElement('iframe');
                         video.src = embed.link;
                         video.title = "Video player";
+                        video.style.width = "200%";
+                        video.style.height = "200%";
                         video.frameborder = "0";
                         video.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
                         video.referrerpolicy = "strict-origin-when-cross-origin";
                         divVideo.appendChild(video);
+
+                        if (embed.type === 'youtube_playlist') {
+                            var playlistIcon = document.createElement('div');
+                            playlistIcon.innerHTML = '<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-23"></use><path d="m 22.53,21.42 0,6.85 5.66,-3.42 -5.66,-3.42 0,0 z m -11.33,0 9.06,0 0,2.28 -9.06,0 0,-2.28 0,0 z m 0,-9.14 13.6,0 0,2.28 -13.6,0 0,-2.28 0,0 z m 0,4.57 13.6,0 0,2.28 -13.6,0 0,-2.28 0,0 z" fill="#fff" id="ytp-id-23"></path></svg>';
+                            playlistIcon.classList.add('fabext-playlist-icon');
+                            divVideo.appendChild(playlistIcon);
+                        }
+                    }
+
+                    // add a text to the video
+                    if (text != href) {
+                        var divText = document.createElement('div');
+                        divText.style.position = "absolute";
+                        divText.style.bottom = "0";
+                        divText.style.left = "0";
+                        divText.style.width = "100%";
+                        divText.style.height = "15px";
+                        divText.style.fontSize = "12px";
+                        divText.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+                        divText.style.color = "white";
+                        divText.style.display = "flex";
+                        divText.style.justifyContent = "center";
+                        divText.style.alignItems = "center";
+                        divText.innerHTML = text;
+                        divVideo.appendChild(divText);
                     }
 
                     // add a div to block the video

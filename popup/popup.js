@@ -1,5 +1,10 @@
 var searchTimeout = null;
 document.addEventListener('DOMContentLoaded', function() {
+    const versionElement = document.getElementById('version');
+    if (versionElement) {
+        versionElement.textContent = chrome.runtime.getManifest().version;
+    }
+
     const favoritesList = document.getElementById('favorites-list');
 
     // Add event listener to the "Open Favorites" button
