@@ -359,16 +359,10 @@ const observer = new MutationObserver((mutations) => {
     */
     let data = document.querySelector("#js-json-data-prefetched-data");
     if (data) {
-        data = data.innerHTML.replace('<!--', '').replace('-->', '');
-        // html decode
-        data = data.replace(/&#34;/g, '"')
-            .replace(/&#39;/g, "'")
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>')
-            .replace(/&amp;/g, '&')
+        data = data.innerText.trim()
         try {
             // Checks if the JSON string is complete
-            if (data.trim().startsWith('{') && data.trim().endsWith('}')) {
+            if (data.startsWith('{') && data.endsWith('}')) {
                 FabData = JSON.parse(data);
             } else {
                 throw new Error("The JSON string is incomplete or badly formed.");
