@@ -11,8 +11,11 @@ const heartFilledIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit 
 const heartFilledMdIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--md edsicon edsicon-heart-filled" aria-hidden="true"></i>`
 const openIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--md edsicon edsicon-link" aria-hidden="true"></i>`
 const VideoIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--md edsicon edsicon-video" aria-hidden="true"></i>`
-
 const addToCartIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--xs edsicon edsicon-shopping-cart" aria-hidden="true"></i>`
+
+function fabext_getIcon(icon, size="md") {
+    return `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--${size} edsicon edsicon-${icon}" aria-hidden="true"></i>`;
+}
 
 function getEmbededVideoId(href) {
     var link = null;
@@ -77,17 +80,33 @@ function fabext_GetCSRFToken() {
 function fabext_SendRequest(method, url, data, callback) {
     fabext_Log('[Fab Extended] Request:', method, url, data);
 
+    // check if the data is not already on the cache
+    if (FabData && FabData['/i/'+url]) {
+        console.log('[Fab Extended] Cache hit:', '/i/'+url);
+        callback({
+            readyState: 4,
+            status: 200,
+            responseText: JSON.stringify(FabData['/i/'+url])
+        });
+        return;
+    }
+
     var xhr = new XMLHttpRequest();
     xhr.open(method, FabAPIUrl+url, true);
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.setRequestHeader("x-csrftoken", fabext_GetCSRFToken());
     xhr.onreadystatechange = function() {
-        callback(xhr);
-
         if (xhr.readyState === 4) {
             fabext_Log('[Fab Extended] Response:', method, url, data, xhr.responseText);
+            if (xhr.status === 200) {
+                if (!FabData) {
+                    FabData = {};
+                }
+                FabData['/i/'+url] = JSON.parse(xhr.responseText);
+            }
         }
+        callback(xhr);
     };
     xhr.send(data);
 }

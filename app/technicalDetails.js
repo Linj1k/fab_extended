@@ -24,10 +24,12 @@ function addTechnicalDetails() {
                 if (image.parentElement.querySelector('#product-technicalDetails') || image.parentElement.dataset.technicalDetails) return;
 
                 image.parentElement.dataset.technicalDetails = true;
+
                 fabext_SendRequest('GET', 'listings/'+uid+"/asset-formats/"+format.value, null, function(response) {
                     if (response.readyState === 4 && response.status === 200) {
-                        const unrealEngineData = JSON.parse(response.responseText);
-                        const technicalDetailsData = unrealEngineData.technicalDetails;
+                        const formatData = JSON.parse(response.responseText);
+                        
+                        const technicalDetailsData = formatData.technicalDetails;
 
                         const technicalDetailsContent = document.createElement('div');
                         technicalDetailsContent.id = 'product-technicalDetails';
@@ -51,6 +53,7 @@ function addTechnicalDetails() {
                         image.parentElement.appendChild(technicalDetailsContent);
                     }
                 });
+
                 return
             }
         });
