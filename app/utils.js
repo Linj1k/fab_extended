@@ -73,7 +73,7 @@ function fabext_SendRequest(method, url, data, callback) {
 
     // check if the data is not already on the cache
     if (FabData && FabData['/i/'+url]) {
-        console.log('[Fab Extended] Cache hit:', '/i/'+url);
+        fabext_Log('[Fab Extended] Cache hit:', '/i/'+url);
         callback({
             readyState: 4,
             status: 200,

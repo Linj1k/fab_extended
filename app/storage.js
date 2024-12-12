@@ -71,7 +71,7 @@ function removeFavorite(url,notify) {
         var index = favorites.findIndex(function(favorite) {
             return favorite.url === url;
         });
-        console.log(url, index);
+        fabext_Log(url, index);
         favorites.splice(index, 1);
         localStorage.setItem('favorites', JSON.stringify(favorites));
 

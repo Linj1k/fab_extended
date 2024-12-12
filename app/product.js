@@ -13,7 +13,7 @@ function addElementsDom() {
                 if (response.readyState === 4 && response.status === 200) {
                     currentProductData = JSON.parse(response.responseText);
     
-                    console.log(currentProductData);
+                    fabext_Log(currentProductData);
                     AutoSelectLicense();
                     addSellerInformationToDetails();
                 }
@@ -50,7 +50,6 @@ function AutoSelectLicense() {
 
                 // option with data-value = parent.dataset.autoSelectLicenseId
                 Array.from(list.children).forEach((option, index) => {
-                    console.log(option, option.dataset.value, parent.dataset.autoSelectLicenseId, option.dataset.value === parent.dataset.autoSelectLicenseId);
                     if (option.dataset.value === parent.dataset.autoSelectLicenseId) {
                         option.click();
                         parent.dataset.autoSelectLicense = true;
@@ -66,7 +65,6 @@ function AutoSelectLicense() {
         } else {
             var licenses = currentProductData.licenses;
             const personalLicense = licenses.find(license => license.slug === "personal");
-            console.log(personalLicense);
 
             parent.dataset.autoSelectLicenseId = personalLicense.listingLicenseId;
             license.click();
