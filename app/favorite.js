@@ -19,7 +19,7 @@ function createFavoritePopup() {
 
     // add button to open favorites in a new tab in rigth of the header
     var openButton = document.createElement("button");
-    openButton.innerHTML = openIcon;
+    openButton.innerHTML = fabext_getIcon('link');
     openButton.title = "Open favorites in a new tab";
     openButton.addEventListener('click', function() {
         chrome.runtime.sendMessage({action: 'open-favorites'});
@@ -28,7 +28,7 @@ function createFavoritePopup() {
 
     // Create the clear button in the header
     var clearButton = document.createElement("button");
-    clearButton.innerHTML = trashIcon;
+    clearButton.innerHTML = fabext_getIcon('trash');
     clearButton.classList.add("favorite-popup-clear-button");
     clearButton.title = "Clear favorites";
     clearButton.addEventListener('click', function() {
@@ -59,6 +59,20 @@ function createFavoritePopup() {
             var url = favorite.url.split('https://www.fab.com')[2] || favorite.url;
             item.href = url;
 
+            var removeButton = document.createElement("button");
+            removeButton.innerHTML = fabext_getIcon('heart-filled');
+            removeButton.style.color = 'red';
+            removeButton.style.marginLeft = '5px';
+            removeButton.style.marginRight = '5px';
+            removeButton.title = "Remove from favorites";
+            removeButton.dataset.url = favorite.url;
+            removeButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                removeFavorite(favorite.url,true);
+                item.remove();
+            });
+            item.appendChild(removeButton);
+
             // Create the image div for the item
             var imageDiv = document.createElement("div");
             imageDiv.classList.add("favorite-popup-item-image","fabkit-Thumbnail-root","fabkit-Thumbnail--16/9","fabkit-scale--radius-2","Vq2qCiz2")
@@ -85,17 +99,18 @@ function createFavoritePopup() {
             header.appendChild(title);
 
             // Create the remove button in the header
-            var removeButton = document.createElement("button");
-            removeButton.innerHTML = trashIcon;
+            // var removeButton = document.createElement("button");
+            // removeButton.innerHTML = fabext_getIcon('heart-filled');
+            // removeButton.style.color = 'red';
 
-            removeButton.title = "Remove from favorites";
-            removeButton.dataset.url = favorite.url;
-            removeButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                removeFavorite(favorite.url,true);
-                item.remove();
-            });
-            header.appendChild(removeButton);
+            // removeButton.title = "Remove from favorites";
+            // removeButton.dataset.url = favorite.url;
+            // removeButton.addEventListener('click', function(e) {
+            //     e.preventDefault();
+            //     removeFavorite(favorite.url,true);
+            //     item.remove();
+            // });
+            // header.appendChild(removeButton);
 
             // Create the category span
             var category = document.createElement("span");
@@ -120,7 +135,7 @@ function addFavoriteButtonToNavbar() {
         var actions = document.querySelector('.fabkit-MegaMenu-actions');
         if (actions) {
             var favoriteButton = document.createElement("button");
-            favoriteButton.innerHTML = heartMdIcon;
+            favoriteButton.innerHTML = fabext_getIcon('heart');
             favoriteButton.id = "favorite-button";
             favoriteButton.classList.add("fabkit-Button-root", "fabkit-Button--icon", "fabkit-Button--sm", "fabkit-Button--ghost", "fabkit-MegaMenu-iconButton");
             favoriteButton.type = "button";
@@ -167,7 +182,7 @@ function addFavoriteButtonProduct() {
             var currentDiv = productTitle.parentNode;
             
             var heartButton = document.createElement("button");
-            heartButton.innerHTML = heartIcon;
+            heartButton.innerHTML = fabext_getIcon('heart', 'xs');
             heartButton.id = "product-heartButton";
             heartButton.classList.add("fabkit-Button-root", "fabkit-Button--icon", "fabkit-Button--sm", "fabkit-Button--ghost", "fabkit-MegaMenu-iconButton");
             heartButton.type = "button";
@@ -254,7 +269,7 @@ function addFavoriteButtonThumbnail(thumbnail) {
 
         heartButton.style.display = "flex";
         heartButton.type = "button";
-        heartButton.innerHTML = heartIcon;
+        heartButton.innerHTML = fabext_getIcon('heart', 'xs');
         heartButton.setAttribute("aria-label", "Add to favorite");
         heartButton.title = "Add to favorite";
 

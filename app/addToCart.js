@@ -30,7 +30,7 @@ function addToCartThumbnail(thumbnail) {
 
         addToCartButton.style.display = "flex";
         addToCartButton.type = "button";
-        addToCartButton.innerHTML = addToCartIcon;
+        addToCartButton.innerHTML = fabext_getIcon('shopping-cart','xs');
         addToCartButton.setAttribute("aria-label", "Add to cart");
         addToCartButton.title = "Add to cart";
 

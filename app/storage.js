@@ -89,9 +89,9 @@ function updateHeartButton(heartButton,url,md = false) {
 
     if (isInFavorite(url)) {
         heartButton.style.color = 'red';
-        heartButton.innerHTML = md ? heartFilledMdIcon : heartFilledIcon;
+        heartButton.innerHTML = fabext_getIcon('heart-filled', md ? 'md' : 'xs');
     } else {
         heartButton.style.color = 'inherit';
-        heartButton.innerHTML = md ? heartMdIcon : heartIcon;
+        heartButton.innerHTML = fabext_getIcon('heart', md ? 'md' : 'xs');
     }
 }
