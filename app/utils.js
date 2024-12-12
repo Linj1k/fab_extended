@@ -22,10 +22,11 @@ function getEmbededVideoId(href) {
     // regex for youtube
     var youtube = href.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/|playlist\?list=)|youtu\.be\/)([^&?#]+)/);
     if (youtube) {
-        type = 'youtube';
         if (href.includes('list=')) {
             link = "https://www.youtube.com/embed/videoseries?list=" + youtube[1];
+            type = 'youtube_playlist';
         } else {
+            type = 'youtube';
             link = "https://www.youtube.com/embed/" + youtube[1];
         }
     }

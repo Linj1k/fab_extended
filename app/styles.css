@@ -115,3 +115,14 @@
 .favorite-popup-item-header button:hover {
     color: #f00;
 }
+
+.fabext-playlist-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    background: rgba(0, 0, 0, .7);
+    border-radius: 4px;
+}
