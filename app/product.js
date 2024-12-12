@@ -1,8 +1,29 @@
+var currentProductData = null;
 function addElementsDom() {
     if(window.location.href.includes("/listings/")) {
         addFavoriteButtonProduct()
-        AutoSelectLicense();
         searchForVideo();
+
+        var aSideProduct = document.querySelector('aside > .fabkit-Surface-root.fabkit-Surface--hideOverflow.fabkit-scale--radius-4.fabkit-Stack-root.fabkit-Stack--column');
+        if (aSideProduct) {
+            if (aSideProduct.dataset.fabext_product_data) {
+                if (aSideProduct.dataset.fabext_product_data_loaded) {
+                    AutoSelectLicense();
+                }
+                return
+            };
+
+            var uid = (window.location.href).split('/').pop();
+            aSideProduct.dataset.fabext_product_data = true;
+            fabext_SendRequest("GET", "listings/"+uid, null, function(response) {
+                if (response.readyState === 4 && response.status === 200) {
+                    currentProductData = JSON.parse(response.responseText);
+                    console.log(currentProductData);
+                    AutoSelectLicense();
+                    aSideProduct.dataset.fabext_product_data_loaded = true;
+                }
+            });
+        }
     }
 
     var productThumbnails = document.querySelectorAll('.fabkit-Stack-root.fabkit-scale--gapX-layout-3.fabkit-scale--gapY-layout-3.fabkit-Stack--column > .fabkit-scale--radius-3');
@@ -19,22 +40,6 @@ function AutoSelectLicense() {
     if (license) {
         const parent = license.parentElement;
         if (parent.dataset.autoSelectLicense) return;
-        var uid = (window.location.href).split('/').pop();
-
-        if (!parent.dataset.autoSelectLicenseRequested) {
-            parent.dataset.autoSelectLicenseRequested = true;
-            fabext_SendRequest("GET", "listings/"+uid, null, function(response) {
-                if (response.readyState === 4 && response.status === 200) {
-                    var listingsData = JSON.parse(response.responseText);
-    
-                    var licenses = listingsData.licenses;
-                    const personalLicenseIndex = licenses.findIndex(license => license.slug === "personal");
-
-                    parent.dataset.autoSelectLicenseIndex = personalLicenseIndex;
-                    license.click();
-                }
-            });
-        }
 
         if (license.getAttribute('aria-expanded') !== 'false') {
             var licenseOptions = document.querySelector('.fabkit-Dropdown-container');
@@ -49,6 +54,12 @@ function AutoSelectLicense() {
                 }
                 parent.dataset.autoSelectLicense = true;
             }
+        } else {
+            var licenses = currentProductData.licenses;
+            const personalLicenseIndex = licenses.findIndex(license => license.slug === "personal");
+
+            parent.dataset.autoSelectLicenseIndex = personalLicenseIndex;
+            license.click();
         }
     }
 }
