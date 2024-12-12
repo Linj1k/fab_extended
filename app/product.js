@@ -128,6 +128,7 @@ function searchForVideo() {
             links.forEach(function(link) {
                 if (link.dataset.searchForVideo) return;
                 var href = link.href;
+                var text = link.innerText;
                 var embed = getEmbededVideoId(href)
 
                 if (embed && embed.link) {
@@ -158,6 +159,8 @@ function searchForVideo() {
                         var video = document.createElement('iframe');
                         video.src = embed.link;
                         video.title = "Video player";
+                        video.style.width = "200%";
+                        video.style.height = "200%";
                         video.frameborder = "0";
                         video.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
                         video.referrerpolicy = "strict-origin-when-cross-origin";
@@ -169,6 +172,24 @@ function searchForVideo() {
                             playlistIcon.classList.add('fabext-playlist-icon');
                             divVideo.appendChild(playlistIcon);
                         }
+                    }
+
+                    // add a text to the video
+                    if (text != href) {
+                        var divText = document.createElement('div');
+                        divText.style.position = "absolute";
+                        divText.style.bottom = "0";
+                        divText.style.left = "0";
+                        divText.style.width = "100%";
+                        divText.style.height = "15px";
+                        divText.style.fontSize = "12px";
+                        divText.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+                        divText.style.color = "white";
+                        divText.style.display = "flex";
+                        divText.style.justifyContent = "center";
+                        divText.style.alignItems = "center";
+                        divText.innerHTML = text;
+                        divVideo.appendChild(divText);
                     }
 
                     // add a div to block the video
