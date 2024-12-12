@@ -1,5 +1,4 @@
-// const Version = chrome.runtime.getManifest().version;
-const Version = "0.1.3";
+const Version = chrome.runtime.getManifest().version;
 var GithubManifest;
 
 var FabAPIUrl = 'https://www.fab.com/i/';
