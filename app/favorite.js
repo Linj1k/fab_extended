@@ -39,6 +39,15 @@ function createFavoritePopup() {
     });
     headerButtons.appendChild(clearButton);
 
+    // add button to open settings in a new tab in rigth of the header
+    var openButtonSetting = document.createElement("button");
+    openButtonSetting.innerHTML = fabext_getIcon('cog');
+    openButtonSetting.title = "Open Settings in a new tab";
+    openButtonSetting.addEventListener('click', function() {
+        chrome.runtime.sendMessage({action: 'open-settings'});
+    });
+    headerButtons.appendChild(openButtonSetting);
+
     var contentDiv = document.createElement("div");
     contentDiv.classList.add("favorite-popup-content");
     popup.appendChild(contentDiv);

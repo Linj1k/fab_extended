@@ -1,5 +1,5 @@
 function addToCartThumbnail(thumbnail) {
-    if (getSetting("Thumbnail_AddToCart",false) === false) return;
+    if (getSetting("Thumbnail_AddToCart",true) === false) return;
 
     if (thumbnail && thumbnail.querySelector('#thumbnail-addToCartButton') === null) {
         var parent = thumbnail.parentElement;

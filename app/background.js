@@ -25,5 +25,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       chrome.tabs.create({ url: chrome.runtime.getURL('popup/favorites/page.html') });
     } else if (request.action === 'open-settings') {
       chrome.tabs.create({ url: chrome.runtime.getURL('popup/settings/page.html') });
+    } else if (request.action === 'reset-settings') {
+      chrome.storage.sync.set({ settings: JSON.stringify(defaultSettings) });
+      sendResponse({ settings: JSON.stringify(defaultSettings) });
     }
 });

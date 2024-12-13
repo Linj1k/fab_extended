@@ -76,15 +76,11 @@ function AutoSelectLicense() {
 
 var searchForLinksTimeout = null;
 function searchForLinks() {
-    if (getSetting("Product_DescriptionLogoLink",false) === false) return;
-
     clearTimeout(searchForLinksTimeout);
     searchForLinksTimeout = setTimeout(() => {
         var DescriptionDiv = document.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-layout-5.fabkit-scale--gapY-layout-5.fabkit-Stack--column');
-        if (DescriptionDiv) {
-
+        if (DescriptionDiv && getSetting("Product_DescriptionLogoLink",true)) {
             var links = DescriptionDiv.querySelectorAll('a');
-
             links.forEach(function(link) {
                 if (link.innerText.trim() === "") return;
                 if (link.dataset.searchForLinks) return;
@@ -143,7 +139,7 @@ function searchForLinks() {
 }
 
 function searchForVideo() {
-    if (getSetting("Product_VideoPlayer",false) === false) return;
+    if (getSetting("Product_VideoPlayer",true) === false) return;
 
     var DescriptionDiv = document.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-layout-5.fabkit-scale--gapY-layout-5.fabkit-Stack--column');
     if (DescriptionDiv) {
@@ -314,8 +310,8 @@ function searchForVideo() {
 }
 
 function addSellerInformationToDetails() {
-    if (getSetting("Product_SellerDetails",false) === false) return;
-    
+    if (getSetting("Product_SellerDetails",true) === false) return;
+
     if (currentSellerData != "loading" && currentProductData.user.sellerName != currentSellerData?.name) {
         currentSellerData = null;
     }

@@ -59,3 +59,12 @@ input:focus {
     color: rgb(168, 41, 53);
 }
 
+.accordion-button {
+    color: white!important;
+    background-color: #2b2c2e!important;
+    border: none;
+}
+
+.accordion-button:focus, .accordion-button:hover, .accordion-button:not(.collapsed) {
+    background-color: #3e3f40!important;
+}
