@@ -12,5 +12,9 @@ function getSettings() {
     return JSON.parse(localStorage.getItem('fabext_settings')) || [];
 }
 function getSetting(type,defaultVal) {
-    return getSettings()[type] || defaultVal;
+    var settings = getSettings();
+    if (settings[type] !== undefined) {
+        return settings[type];
+    }
+    return defaultVal;
 }

@@ -321,7 +321,7 @@ function addSellerInformationToDetails() {
         fabext_SendRequest("GET", "sellers/"+currentProductData.user.sellerName+"/profile", null, function(response) {
             if (response.readyState === 4 && response.status === 200) {
                 currentSellerData = JSON.parse(response.responseText);
-                console.log(currentSellerData);
+                fabext_Log(currentSellerData);
 
                 const productDetails = document.querySelectorAll('.fabkit-Surface-root.fabkit-Surface--emphasis-background-elevated-low-transparent.fabkit-scale--gutterX-spacing-8.fabkit-scale--gutterY-spacing-8.fabkit-Stack-root.fabkit-scale--gapX-spacing-5.fabkit-scale--gapY-spacing-5.fabkit-Stack--column')[1];
                 if (productDetails) {
