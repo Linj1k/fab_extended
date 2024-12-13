@@ -33,14 +33,14 @@ body {
 .fs-9 {
     font-size: 0.6rem!important;
 }
-input {
+.search-bar {
     color: white!important;
     background-color: #2b2c2e!important;
 }
-input::placeholder {
+.search-bar::placeholder {
     color: #878a8d!important;
 }
-input:focus {
+.search-bar:focus {
     background-color: #3e3f40!important;
 }
 
