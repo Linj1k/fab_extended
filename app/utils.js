@@ -1,4 +1,5 @@
 const Version = chrome.runtime.getManifest().version;
+var devmode = true;
 var GithubManifest;
 
 var FabAPIUrl = 'https://www.fab.com/i/';
@@ -51,7 +52,6 @@ function getEmbededVideoId(href) {
     };
 }
 
-var devmode = false;
 
 function fabext_Log(...msg) {
     if (devmode) {

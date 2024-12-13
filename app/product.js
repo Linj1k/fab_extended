@@ -36,6 +36,8 @@ function addElementsDom() {
 }
 
 function AutoSelectLicense() {
+    if (getSetting("Product_AutoSelectLicense","personal") === "off") return;
+
     var license = document.querySelector('.fabkit-Stack-root.fabkit-Stack--align_center.fabkit-Stack--justify_space-between.fabkit-InputContainer-root.fabkit-InputContainer--md');
     if (license) {
         const parent = license.parentElement;
@@ -64,7 +66,7 @@ function AutoSelectLicense() {
             }
         } else {
             var licenses = currentProductData.licenses;
-            const personalLicense = licenses.find(license => license.slug === "personal");
+            const personalLicense = licenses.find(license => license.slug === getSetting("Product_AutoSelectLicense","personal"));
 
             parent.dataset.autoSelectLicenseId = personalLicense.listingLicenseId;
             license.click();
@@ -74,6 +76,8 @@ function AutoSelectLicense() {
 
 var searchForLinksTimeout = null;
 function searchForLinks() {
+    if (getSetting("Product_DescriptionLogoLink",false) === false) return;
+
     clearTimeout(searchForLinksTimeout);
     searchForLinksTimeout = setTimeout(() => {
         var DescriptionDiv = document.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-layout-5.fabkit-scale--gapY-layout-5.fabkit-Stack--column');
@@ -139,6 +143,8 @@ function searchForLinks() {
 }
 
 function searchForVideo() {
+    if (getSetting("Product_VideoPlayer",false) === false) return;
+
     var DescriptionDiv = document.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-layout-5.fabkit-scale--gapY-layout-5.fabkit-Stack--column');
     if (DescriptionDiv) {
         var carouselDiv = document.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-layout-6.fabkit-scale--gapY-layout-6.fabkit-Stack--column');
@@ -308,6 +314,8 @@ function searchForVideo() {
 }
 
 function addSellerInformationToDetails() {
+    if (getSetting("Product_SellerDetails",false) === false) return;
+    
     if (currentSellerData != "loading" && currentProductData.user.sellerName != currentSellerData?.name) {
         currentSellerData = null;
     }

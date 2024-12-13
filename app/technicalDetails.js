@@ -9,6 +9,8 @@ const validFormat = [
 ];
 
 function addTechnicalDetails() {
+    if (getSetting("Product_TechnicalDetails",false) === false) return;
+
     const uid = window.location.pathname.split('/').pop();
 
     const listingsFormat = document.querySelector('#listings-formats');

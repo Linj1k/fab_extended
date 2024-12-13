@@ -1,4 +1,6 @@
 function addToCartThumbnail(thumbnail) {
+    if (getSetting("Thumbnail_AddToCart",false) === false) return;
+
     if (thumbnail && thumbnail.querySelector('#thumbnail-addToCartButton') === null) {
         var parent = thumbnail.parentElement;
         var currentUrl = parent.querySelector('.fabkit-Thumbnail-overlay');

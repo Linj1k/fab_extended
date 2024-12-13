@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Fab Extended",
-    "version": "0.1.6",
+    "version": "0.1.8",
     "description": "Improving the Fab.com experience",
     "permissions": [
         "storage"
@@ -9,7 +9,7 @@
     "content_scripts": [
       {
         "matches": ["https://www.fab.com/*"],
-        "js": ["app/toastifyjs/toastify-js.js","app/utils.js", "app/storage.js", "app/favorite.js", "app/addToCart.js", "app/technicalDetails.js", "app/product.js"],
+        "js": ["app/toastifyjs/toastify-js.js","app/utils.js", "app/storage.js", "app/settings.js", "app/favorite.js", "app/addToCart.js", "app/technicalDetails.js", "app/product.js"],
         "css": ["app/toastifyjs/toastify.min.css","app/styles.css"]
       }
     ],
