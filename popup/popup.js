@@ -7,13 +7,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const favoritesList = document.getElementById('favorites-list');
 
-    // Add event listener to the "Open Favorites" button
+    // Add event listener to the "openInNewTab Favorites" button
     const openInNewTab = document.getElementById('openInNewTab');
     if (openInNewTab) {
         openInNewTab.addEventListener('click', function() {
             chrome.runtime.sendMessage({action: 'open-favorites'});
         });
     }
+
+    // Add event listener to the "openSettings" button
+    const openSettings = document.getElementById('openSettings');
+    if (openSettings) {
+        openSettings.addEventListener('click', function() {
+            chrome.runtime.sendMessage({action: 'open-settings'});
+        });
+    }
+    
 
     // Get the favorites from the storage
     chrome.storage.sync.get('favorites', function(data) {
@@ -22,10 +31,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Update the amount of favorites
         var favAmount = document.getElementById('fav-amount');
+        if (!favAmount) return;
         favAmount.textContent = favorites.length;
     
         // Update the favorites list
         var favoritesList = document.getElementById('favorites-list');
+        if (!favoritesList) return;
         favoritesList.innerHTML = '';
     
         favorites.sort(function(a, b) {
@@ -63,13 +74,11 @@ document.addEventListener('DOMContentLoaded', function() {
             cardTitle.textContent = favorite.title;
     
             const button = document.createElement('button');
-            button.classList.add('btn', 'btn-outline-secondary', 'ms-1', 'p-0');
+            button.classList.add('btn', 'btn-transparent', 'ms-1', 'p-0');
     
-            const icon = document.createElement('img');
-            icon.src = 'trash.svg';
-            icon.alt = 'Remove from favorites';
-            icon.style.width = '1rem';
-            icon.style.height = '1rem';
+            const icon = document.createElement('i');
+            icon.classList.add('fa-solid','fa-heart','remove-icon');
+            icon.title = 'Remove from favorites';
             button.appendChild(icon);
     
             cardHeader.appendChild(cardTitle);
@@ -131,12 +140,14 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const searchBar = document.getElementById('search-input');
-    searchBar.addEventListener('input', function() {
-        // add a delay before searching to avoid searching on every key press
-        clearTimeout(searchTimeout);
-
-        searchTimeout = setTimeout(() => {
-            search(searchBar.value);
-        }, 300);
-    });
+    if(searchBar) {
+        searchBar.addEventListener('input', function() {
+            // add a delay before searching to avoid searching on every key press
+            clearTimeout(searchTimeout);
+    
+            searchTimeout = setTimeout(() => {
+                search(searchBar.value);
+            }, 300);
+        });
+    }
 });

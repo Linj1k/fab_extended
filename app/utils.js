@@ -1,19 +1,13 @@
-// const Version = chrome.runtime.getManifest().version;
-const Version = "0.1.3";
+const Version = chrome.runtime.getManifest().version;
+var devmode = false;
 var GithubManifest;
 
 var FabAPIUrl = 'https://www.fab.com/i/';
 var FabData;
 
-const trashIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--md edsicon edsicon-trash" aria-hidden="true"></i>`
-const heartMdIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--md edsicon edsicon-heart" aria-hidden="true"></i>`
-const heartIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--xs edsicon edsicon-heart" aria-hidden="true"></i>`
-const heartFilledIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--xs edsicon edsicon-heart-filled" aria-hidden="true"></i>`
-const heartFilledMdIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--md edsicon edsicon-heart-filled" aria-hidden="true"></i>`
-const openIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--md edsicon edsicon-link" aria-hidden="true"></i>`
-const VideoIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--md edsicon edsicon-video" aria-hidden="true"></i>`
-
-const addToCartIcon = `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--xs edsicon edsicon-shopping-cart" aria-hidden="true"></i>`
+function fabext_getIcon(icon, size="md") {
+    return `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--${size} edsicon edsicon-${icon}" aria-hidden="true"></i>`;
+}
 
 function getEmbededVideoId(href) {
     var link = null;
@@ -58,7 +52,6 @@ function getEmbededVideoId(href) {
     };
 }
 
-var devmode = false;
 
 function fabext_Log(...msg) {
     if (devmode) {
@@ -78,17 +71,33 @@ function fabext_GetCSRFToken() {
 function fabext_SendRequest(method, url, data, callback) {
     fabext_Log('[Fab Extended] Request:', method, url, data);
 
+    // check if the data is not already on the cache
+    if (FabData && FabData['/i/'+url]) {
+        fabext_Log('[Fab Extended] Cache hit:', '/i/'+url);
+        callback({
+            readyState: 4,
+            status: 200,
+            responseText: JSON.stringify(FabData['/i/'+url])
+        });
+        return;
+    }
+
     var xhr = new XMLHttpRequest();
     xhr.open(method, FabAPIUrl+url, true);
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.setRequestHeader("x-csrftoken", fabext_GetCSRFToken());
     xhr.onreadystatechange = function() {
-        callback(xhr);
-
         if (xhr.readyState === 4) {
             fabext_Log('[Fab Extended] Response:', method, url, data, xhr.responseText);
+            if (xhr.status === 200) {
+                if (!FabData) {
+                    FabData = {};
+                }
+                FabData['/i/'+url] = JSON.parse(xhr.responseText);
+            }
         }
+        callback(xhr);
     };
     xhr.send(data);
 }

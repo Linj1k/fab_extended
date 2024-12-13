@@ -33,13 +33,38 @@ body {
 .fs-9 {
     font-size: 0.6rem!important;
 }
-input {
+.search-bar {
     color: white!important;
     background-color: #2b2c2e!important;
 }
-input::placeholder {
+.search-bar::placeholder {
     color: #878a8d!important;
 }
-input:focus {
+.search-bar:focus {
+    background-color: #3e3f40!important;
+}
+
+.icon svg{
+    fill: rgb(212, 212, 212);
+}
+.icon:hover svg{
+    fill: white;
+}
+
+.remove-icon{
+    color: rgb(220,53,69);
+}
+
+.remove-icon:hover {
+    color: rgb(168, 41, 53);
+}
+
+.accordion-button {
+    color: white!important;
+    background-color: #2b2c2e!important;
+    border: none;
+}
+
+.accordion-button:focus, .accordion-button:hover, .accordion-button:not(.collapsed) {
     background-color: #3e3f40!important;
 }

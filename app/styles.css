@@ -6,7 +6,7 @@
     display: none;
     position: fixed;
     z-index: 9999!important;
-    width: 30%;
+    width: 40%;
     max-width: 25rem !important;
     height: 475px;
     background-color: #212124;
@@ -57,6 +57,7 @@
     margin-bottom: 10px;
     cursor: pointer;
     padding: 10px;
+    padding-left: 0;
     border-radius: 5px;
 }
 

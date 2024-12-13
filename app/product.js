@@ -1,29 +1,29 @@
 var currentProductData = null;
+var currentSellerData = null;
 function addElementsDom() {
     if(window.location.href.includes("/listings/")) {
-        addFavoriteButtonProduct()
-        searchForVideo();
+        var uid = (window.location.href).split('/').pop();
+        if (currentProductData != "loading" && uid !== currentProductData?.uid) {
+            currentProductData = null;
+        }
 
-        var aSideProduct = document.querySelector('aside > .fabkit-Surface-root.fabkit-Surface--hideOverflow.fabkit-scale--radius-4.fabkit-Stack-root.fabkit-Stack--column');
-        if (aSideProduct) {
-            if (aSideProduct.dataset.fabext_product_data) {
-                if (aSideProduct.dataset.fabext_product_data_loaded) {
-                    AutoSelectLicense();
-                }
-                return
-            };
-
-            var uid = (window.location.href).split('/').pop();
-            aSideProduct.dataset.fabext_product_data = true;
+        if (currentProductData == null) {
+            currentProductData = "loading";
             fabext_SendRequest("GET", "listings/"+uid, null, function(response) {
                 if (response.readyState === 4 && response.status === 200) {
                     currentProductData = JSON.parse(response.responseText);
-                    console.log(currentProductData);
+    
+                    fabext_Log(currentProductData);
                     AutoSelectLicense();
-                    aSideProduct.dataset.fabext_product_data_loaded = true;
+                    addSellerInformationToDetails();
                 }
             });
+        } else if(currentProductData != "loading") {
+            AutoSelectLicense();
         }
+
+        addFavoriteButtonProduct();
+        searchForLinks();
     }
 
     var productThumbnails = document.querySelectorAll('.fabkit-Stack-root.fabkit-scale--gapX-layout-3.fabkit-scale--gapY-layout-3.fabkit-Stack--column > .fabkit-scale--radius-3');
@@ -36,6 +36,8 @@ function addElementsDom() {
 }
 
 function AutoSelectLicense() {
+    if (getSetting("Product_AutoSelectLicense","personal") === "off") return;
+
     var license = document.querySelector('.fabkit-Stack-root.fabkit-Stack--align_center.fabkit-Stack--justify_space-between.fabkit-InputContainer-root.fabkit-InputContainer--md');
     if (license) {
         const parent = license.parentElement;
@@ -47,94 +49,173 @@ function AutoSelectLicense() {
                 licenseOptions = licenseOptions.children[0];
 
                 const list = licenseOptions.children[1];
-                if (list.children[parent.dataset.autoSelectLicenseIndex]) {
-                    list.children[parent.dataset.autoSelectLicenseIndex].click();
-                } else {
+
+                // option with data-value = parent.dataset.autoSelectLicenseId
+                Array.from(list.children).forEach((option, index) => {
+                    if (option.dataset.value === parent.dataset.autoSelectLicenseId) {
+                        option.click();
+                        parent.dataset.autoSelectLicense = true;
+                        return;
+                    }
+                });
+
+                if (!parent.dataset.autoSelectLicense) {
                     list.children[0].click();
+                    parent.dataset.autoSelectLicense = true;
                 }
-                parent.dataset.autoSelectLicense = true;
             }
         } else {
             var licenses = currentProductData.licenses;
-            const personalLicenseIndex = licenses.findIndex(license => license.slug === "personal");
+            const personalLicense = licenses.find(license => license.slug === getSetting("Product_AutoSelectLicense","personal"));
 
-            parent.dataset.autoSelectLicenseIndex = personalLicenseIndex;
+            parent.dataset.autoSelectLicenseId = personalLicense.listingLicenseId;
             license.click();
         }
     }
 }
 
-var searchForVideoTimeout = null;
-function searchForVideo() {
-    clearTimeout(searchForVideoTimeout);
-    searchForVideoTimeout = setTimeout(() => {
+var searchForLinksTimeout = null;
+function searchForLinks() {
+    clearTimeout(searchForLinksTimeout);
+    searchForLinksTimeout = setTimeout(() => {
         var DescriptionDiv = document.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-layout-5.fabkit-scale--gapY-layout-5.fabkit-Stack--column');
-
-        if (DescriptionDiv) {
-            var carouselDiv = document.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-layout-6.fabkit-scale--gapY-layout-6.fabkit-Stack--column');
-            var carouselBig = carouselDiv.children[0];
-            var carousel = carouselDiv.children[1];
-            if (!carousel) {
-                carousel = document.createElement('div');
-                carousel.className = "fabkit-Stack-root fabkit-Stack--align_center fabkit-scale--gapX-layout-4 fabkit-scale--gapY-layout-4 fabkit-Stack--fullWidth _lPWHTqD";
-                carouselDiv.appendChild(carousel);
-
-                const carouselOl = document.createElement('ol');
-                carouselOl.className = "fabkit-Stack-root fabkit-Stack--align_center fabkit-scale--gapX-layout-4 fabkit-scale--gapY-layout-4 fabkit-Stack--fullWidth gxEZLyeW";
-                carousel.appendChild(carouselOl);
-                carousel = carouselOl;
-                
-                // copy the image from big carousel to the small carousel
-                var img = carouselBig.querySelector('img');
-                if (img) {
-                    var li = document.createElement('li');
-                    var div = document.createElement('div');
-                    div.className = "fabkit-Thumbnail-root fabkit-Thumbnail--16/9 fabkit-scale--radius-2 FJXTLkFZ";
-                    div.style.position = "relative";
-                    li.appendChild(div);
-                    var imgCopy = img.cloneNode(true);
-                    div.appendChild(imgCopy);
-
-                    // add a div to block the image
-                    var divBlock = document.createElement('div');
-                    divBlock.style.position = "absolute";
-                    divBlock.style.top = "0";
-                    divBlock.style.left = "0";
-                    divBlock.style.width = "100%";
-                    divBlock.style.height = "100%";
-                    divBlock.onclick = function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        carouselBig = carouselDiv.children[0];
-                        while (carouselBig.firstChild) {
-                            carouselBig.removeChild(carouselBig.firstChild);
-                        }
-
-                        var img = imgCopy.cloneNode(true);
-                        carouselBig.appendChild(img);
-                    };
-                    div.appendChild(divBlock);
-
-                    carousel.appendChild(li);
-                }
-            } else {
-                carousel = carousel.querySelector('ol');
-            }
-            // search all the links in the description
-            const videoToAppend = [];
-
+        if (DescriptionDiv && getSetting("Product_DescriptionLogoLink",true)) {
             var links = DescriptionDiv.querySelectorAll('a');
             links.forEach(function(link) {
-                if (link.dataset.searchForVideo) return;
+                if (link.innerText.trim() === "") return;
+                if (link.dataset.searchForLinks) return;
+
+                const href = link.href.trim().replace('www.','');
+                var text;
+
+                if (href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?fab\.com/) || href.startsWith('https://unrealengine.com/marketplace')) {
+                    text = fabext_getIcon('fab', 'xs') + link.innerHTML;
+                } else if (href.startsWith('https://discord.gg') || href.startsWith('https://discord.com/invite/')) {
+                    text = fabext_getIcon('discord', 'xs') + link.innerHTML;
+                } else if (href.startsWith('https://instagram.com')) {
+                    text = fabext_getIcon('instagram', 'xs') + link.innerHTML;
+                } else if (href.startsWith('https://facebook.com')) {
+                    text = fabext_getIcon('facebook', 'xs') + link.innerHTML;
+                } else if (href.startsWith('https://twitter.com') || href.startsWith('https://x.com')) {
+                    text = fabext_getIcon('twitter-x', 'xs') + link.innerHTML;
+                } else if (href.startsWith('https://linkedin.com')) {
+                    text = fabext_getIcon('linkedin', 'xs') + link.innerHTML;
+                } else if (href.startsWith('https://youtube.com') && !href.includes('playlist') && !href.includes('watch?v')) {
+                    text = fabext_getIcon('youtube', 'xs') + link.innerHTML;
+                } else if (href.startsWith('https://twitch.tv')) {
+                    text = fabext_getIcon('twitch', 'xs') + link.innerHTML;
+                } else if (href.startsWith('https://reddit.com')) {
+                    text = fabext_getIcon('reddit', 'xs') + link.innerHTML;
+                } else if (href.startsWith('https://tiktok.com/')) {
+                    text = fabext_getIcon('tiktok', 'xs') + link.innerHTML;
+                } else if (href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?epicgames\.com/)) {
+                    text = fabext_getIcon('epic-games', 'xs') + link.innerHTML;
+                } else if (href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?unrealengine\.com/)) {
+                    text = fabext_getIcon('unreal-engine', 'xs') + link.innerHTML;
+                } else if (href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?unity\.com/)) {
+                    text = fabext_getIcon('unity', 'xs') + link.innerHTML;
+                } else if(href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?artstation\.com/)) {
+                    text = fabext_getIcon('artstation', 'xs') + link.innerHTML;
+                } else if(href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?github\.com/)) {
+                    text = fabext_getIcon('github', 'xs') + link.innerHTML;
+                } else if (href.startsWith('https://skfb.ly') || href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?sketchfab\.com/)) {
+                    text = fabext_getIcon('sketchfab', 'xs') + link.innerHTML;
+                } else if(href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?itch\.io/)) {
+                    text = fabext_getIcon('gamepad', 'xs') + link.innerHTML;
+                } else if(href.startsWith('mailto:')) {
+                    text = fabext_getIcon('envelope', 'xs') + link.innerHTML;
+                }
+
+                if (text) {
+                    link.dataset.searchForLinks = true;
+                    link.style.marginLeft = "5px";
+                    link.innerHTML = text;
+                }
+            });
+        }
+
+        searchForVideo();
+    }, 100);
+}
+
+function searchForVideo() {
+    if (getSetting("Product_VideoPlayer",true) === false) return;
+
+    var DescriptionDiv = document.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-layout-5.fabkit-scale--gapY-layout-5.fabkit-Stack--column');
+    if (DescriptionDiv) {
+        var carouselDiv = document.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-layout-6.fabkit-scale--gapY-layout-6.fabkit-Stack--column');
+        if (carouselDiv && carouselDiv.dataset.searchForVideo) return;
+
+        var carouselBig = carouselDiv.children[0];
+        var carousel = carouselDiv.children[1];
+        if (!carousel) {
+            carousel = document.createElement('div');
+            carousel.className = "fabkit-Stack-root fabkit-Stack--align_center fabkit-scale--gapX-layout-4 fabkit-scale--gapY-layout-4 fabkit-Stack--fullWidth _lPWHTqD";
+            carouselDiv.appendChild(carousel);
+
+            const carouselOl = document.createElement('ol');
+            carouselOl.className = "fabkit-Stack-root fabkit-Stack--align_center fabkit-scale--gapX-layout-4 fabkit-scale--gapY-layout-4 fabkit-Stack--fullWidth gxEZLyeW";
+            carousel.appendChild(carouselOl);
+            carousel = carouselOl;
+            
+            // copy the image from big carousel to the small carousel
+            var img = carouselBig.querySelector('img');
+            if (img) {
+                var li = document.createElement('li');
+                var div = document.createElement('div');
+                div.className = "fabkit-Thumbnail-root fabkit-Thumbnail--16/9 fabkit-scale--radius-2 FJXTLkFZ";
+                div.style.position = "relative";
+                li.appendChild(div);
+                var imgCopy = img.cloneNode(true);
+                div.appendChild(imgCopy);
+
+                // add a div to block the image
+                var divBlock = document.createElement('div');
+                divBlock.style.position = "absolute";
+                divBlock.style.top = "0";
+                divBlock.style.left = "0";
+                divBlock.style.width = "100%";
+                divBlock.style.height = "100%";
+                divBlock.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    carouselBig = carouselDiv.children[0];
+                    while (carouselBig.firstChild) {
+                        carouselBig.removeChild(carouselBig.firstChild);
+                    }
+
+                    var img = imgCopy.cloneNode(true);
+                    carouselBig.appendChild(img);
+                };
+                div.appendChild(divBlock);
+
+                carousel.appendChild(li);
+            }
+        } else {
+            carousel = carousel.querySelector('ol');
+        }
+        // search all the links in the description
+        const maxVideos = getSetting("Product_MaxVideos", 0);
+        console.log(maxVideos);
+        const videoToAppend = [];
+
+        var links = DescriptionDiv.querySelectorAll('a');
+        Array.from(links).some(function(link) {
+            if (maxVideos > 0 && videoToAppend.length >= maxVideos){
+                console.log('maxVideos reached');
+                return true;
+            };
+            if (!link.dataset.searchForVideo) {
                 var href = link.href;
                 var text = link.innerText;
                 var embed = getEmbededVideoId(href)
 
                 if (embed && embed.link) {
-                    // add the icon to the link
-                    link.innerHTML = VideoIcon + link.innerHTML;
                     link.dataset.searchForVideo = true;
+
+                    // add the icon to the link
+                    link.innerHTML = fabext_getIcon('video','xs') + link.innerHTML;
 
                     // add the video to the carousel
                     var liVdeo = document.createElement('li');
@@ -182,11 +263,12 @@ function searchForVideo() {
                         divText.style.left = "0";
                         divText.style.width = "100%";
                         divText.style.height = "15px";
-                        divText.style.fontSize = "12px";
-                        divText.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+                        divText.style.fontSize = "10px";
+                        divText.style.paddingLeft = "3px";
+                        divText.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
                         divText.style.color = "white";
                         divText.style.display = "flex";
-                        divText.style.justifyContent = "center";
+                        divText.style.justifyContent = "left";
                         divText.style.alignItems = "center";
                         divText.innerHTML = text;
                         divVideo.appendChild(divText);
@@ -199,6 +281,7 @@ function searchForVideo() {
                     divBlock.style.left = "0";
                     divBlock.style.width = "100%";
                     divBlock.style.height = "100%";
+                    divBlock.title = text;
                     divBlock.onclick = function(e) {
                         e.preventDefault();
                         e.stopPropagation();
@@ -223,43 +306,84 @@ function searchForVideo() {
 
                     videoToAppend.push(liVdeo);
                 }
-            });
+            };
+        });
 
-            if (videoToAppend.length > 0) {
-                // add the video to the carousel (revert the order)
-                videoToAppend.reverse().forEach(function(video) {
-                    carousel.insertBefore(video, carousel.firstChild);
-                });
-            }
+        if (videoToAppend.length > 0) {
+            // add the video to the carousel (revert the order)
+            videoToAppend.reverse().forEach(function(video) {
+                carousel.insertBefore(video, carousel.firstChild);
+            });
         }
-    }, 100);
+        carouselDiv.dataset.searchForVideo = true;
+    }
+}
+
+function addSellerInformationToDetails() {
+    if (getSetting("Product_SellerDetails",true) === false) return;
+
+    if (currentSellerData != "loading" && currentProductData.user.sellerName != currentSellerData?.name) {
+        currentSellerData = null;
+    }
+
+    if (currentSellerData == null) {
+        currentSellerData = "loading";
+        fabext_SendRequest("GET", "sellers/"+currentProductData.user.sellerName+"/profile", null, function(response) {
+            if (response.readyState === 4 && response.status === 200) {
+                currentSellerData = JSON.parse(response.responseText);
+                fabext_Log(currentSellerData);
+
+                const productDetails = document.querySelectorAll('.fabkit-Surface-root.fabkit-Surface--emphasis-background-elevated-low-transparent.fabkit-scale--gutterX-spacing-8.fabkit-scale--gutterY-spacing-8.fabkit-Stack-root.fabkit-scale--gapX-spacing-5.fabkit-scale--gapY-spacing-5.fabkit-Stack--column')[1];
+                if (productDetails) {
+                    const List = productDetails.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-spacing-3.fabkit-scale--gapY-spacing-3.fabkit-Stack--column');
+                    if (!List || List.dataset.sellerinfo) return;    
+                    
+                    const appendData = (title, data, href) => {
+                        var seller = document.createElement('div');
+                        seller.className = "jpigE2gQ fabkit-Grid-root";
+            
+                        var sellerTitle = document.createElement('div');
+                        sellerTitle.className = "fabkit-Typography-root fabkit-Typography--align-start fabkit-Typography--intent-secondary fabkit-Text--md fabkit-Text--regular";
+                        sellerTitle.innerHTML = title;
+                        seller.appendChild(sellerTitle);
+            
+                        var sellerLink = document.createElement('a');
+                        sellerLink.href = href || data || "#";
+                        sellerLink.className = "fabkit-Typography-root fabkit-Typography--align-start fabkit-Typography--intent-primary fabkit-Text--sm fabkit-Text--regular";
+                        sellerLink.innerHTML = data;
+                        seller.appendChild(sellerLink);
+            
+                        List.appendChild(seller);
+                    }
+            
+                    appendData('Support email', currentSellerData.supportEmail, 'mailto:'+currentSellerData.supportEmail);
+
+                    List.dataset.sellerinfo = true;
+                }
+            }
+        });
+    }
 }
 
 const observer = new MutationObserver((mutations) => {
     /**
      * Retrieves data preloaded in the DOM (I didn't use it in the end, but I prefer to keep the code just in case.)
     */
-    // let data = document.querySelector("#js-dom-data-prefetched-data");
-    // if (data) {
-    //     data = data.innerHTML.replace('<!--', '').replace('-->', '');
-    //     // html decode
-    //     data = data.replace(/&#34;/g, '"')
-    //         .replace(/&#39;/g, "'")
-    //         .replace(/&lt;/g, '<')
-    //         .replace(/&gt;/g, '>')
-    //         .replace(/&amp;/g, '&')
-    //     try {
-    //         // Checks if the JSON string is complete
-    //         if (data.trim().startsWith('{') && data.trim().endsWith('}')) {
-    //             FabData = JSON.parse(data);
-    //         } else {
-    //             throw new Error("The JSON string is incomplete or badly formed.");
-    //         }
-    //     } catch (e) {
-    //         console.error("JSON parsing error :", e);
-    //     }
-    //     fabext_Log( typeof FabData, FabData );
-    // }
+    let data = document.querySelector("#js-json-data-prefetched-data");
+    if (data) {
+        data = data.innerText.trim()
+        try {
+            // Checks if the JSON string is complete
+            if (data.startsWith('{') && data.endsWith('}')) {
+                FabData = JSON.parse(data);
+            } else {
+                throw new Error("The JSON string is incomplete or badly formed.");
+            }
+        } catch (e) {
+            console.error("JSON parsing error :", e);
+        }
+        fabext_Log( typeof FabData, FabData );
+    }
 
     let shouldAddElements = false;
     for (let i = 0; i < mutations.length; i++) {

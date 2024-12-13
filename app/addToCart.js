@@ -1,4 +1,6 @@
 function addToCartThumbnail(thumbnail) {
+    if (getSetting("Thumbnail_AddToCart",true) === false) return;
+
     if (thumbnail && thumbnail.querySelector('#thumbnail-addToCartButton') === null) {
         var parent = thumbnail.parentElement;
         var currentUrl = parent.querySelector('.fabkit-Thumbnail-overlay');
@@ -30,7 +32,7 @@ function addToCartThumbnail(thumbnail) {
 
         addToCartButton.style.display = "flex";
         addToCartButton.type = "button";
-        addToCartButton.innerHTML = addToCartIcon;
+        addToCartButton.innerHTML = fabext_getIcon('shopping-cart','xs');
         addToCartButton.setAttribute("aria-label", "Add to cart");
         addToCartButton.title = "Add to cart";
 
