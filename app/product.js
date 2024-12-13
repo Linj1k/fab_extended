@@ -144,6 +144,8 @@ function searchForVideo() {
     var DescriptionDiv = document.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-layout-5.fabkit-scale--gapY-layout-5.fabkit-Stack--column');
     if (DescriptionDiv) {
         var carouselDiv = document.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-layout-6.fabkit-scale--gapY-layout-6.fabkit-Stack--column');
+        if (carouselDiv && carouselDiv.dataset.searchForVideo) return;
+
         var carouselBig = carouselDiv.children[0];
         var carousel = carouselDiv.children[1];
         if (!carousel) {
@@ -194,110 +196,117 @@ function searchForVideo() {
             carousel = carousel.querySelector('ol');
         }
         // search all the links in the description
+        const maxVideos = getSetting("Product_MaxVideos", 0);
+        console.log(maxVideos);
         const videoToAppend = [];
 
         var links = DescriptionDiv.querySelectorAll('a');
-        links.forEach(function(link) {
-            if (link.dataset.searchForVideo) return;
-            var href = link.href;
-            var text = link.innerText;
-            var embed = getEmbededVideoId(href)
+        Array.from(links).some(function(link) {
+            if (maxVideos > 0 && videoToAppend.length >= maxVideos){
+                console.log('maxVideos reached');
+                return true;
+            };
+            if (!link.dataset.searchForVideo) {
+                var href = link.href;
+                var text = link.innerText;
+                var embed = getEmbededVideoId(href)
 
-            if (embed && embed.link) {
-                link.dataset.searchForVideo = true;
+                if (embed && embed.link) {
+                    link.dataset.searchForVideo = true;
 
-                // add the icon to the link
-                link.innerHTML = fabext_getIcon('video','xs') + link.innerHTML;
+                    // add the icon to the link
+                    link.innerHTML = fabext_getIcon('video','xs') + link.innerHTML;
 
-                // add the video to the carousel
-                var liVdeo = document.createElement('li');
+                    // add the video to the carousel
+                    var liVdeo = document.createElement('li');
 
-                var divVideo = document.createElement('div');
-                divVideo.className = "fabkit-Thumbnail-root fabkit-Thumbnail--16/9 fabkit-scale--radius-2 FJXTLkFZ";
-                divVideo.style.position = "relative";
-                liVdeo.appendChild(divVideo);
+                    var divVideo = document.createElement('div');
+                    divVideo.className = "fabkit-Thumbnail-root fabkit-Thumbnail--16/9 fabkit-scale--radius-2 FJXTLkFZ";
+                    divVideo.style.position = "relative";
+                    liVdeo.appendChild(divVideo);
 
-                if (embed.type === 'soundcloud') {
-                    var soundcloudIcon = document.createElement('img');
-                    soundcloudIcon.src = "https://a-v2.sndcdn.com/assets/images/brand-1b72dd82.svg";
-                    soundcloudIcon.style.position = "absolute";
-                    soundcloudIcon.style.top = "0";
-                    soundcloudIcon.style.left = "0";
-                    soundcloudIcon.style.width = "100%";
-                    soundcloudIcon.style.height = "100%";
-                    soundcloudIcon.style.padding = "20px";
-                    soundcloudIcon.style.objectFit = "contain";
-                    divVideo.appendChild(soundcloudIcon);
-                } else {
-                    var video = document.createElement('iframe');
-                    video.src = embed.link;
-                    video.title = "Video player";
-                    video.style.width = "200%";
-                    video.style.height = "200%";
-                    video.frameborder = "0";
-                    video.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-                    video.referrerpolicy = "strict-origin-when-cross-origin";
-                    divVideo.appendChild(video);
+                    if (embed.type === 'soundcloud') {
+                        var soundcloudIcon = document.createElement('img');
+                        soundcloudIcon.src = "https://a-v2.sndcdn.com/assets/images/brand-1b72dd82.svg";
+                        soundcloudIcon.style.position = "absolute";
+                        soundcloudIcon.style.top = "0";
+                        soundcloudIcon.style.left = "0";
+                        soundcloudIcon.style.width = "100%";
+                        soundcloudIcon.style.height = "100%";
+                        soundcloudIcon.style.padding = "20px";
+                        soundcloudIcon.style.objectFit = "contain";
+                        divVideo.appendChild(soundcloudIcon);
+                    } else {
+                        var video = document.createElement('iframe');
+                        video.src = embed.link;
+                        video.title = "Video player";
+                        video.style.width = "200%";
+                        video.style.height = "200%";
+                        video.frameborder = "0";
+                        video.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+                        video.referrerpolicy = "strict-origin-when-cross-origin";
+                        divVideo.appendChild(video);
 
-                    if (embed.type === 'youtube_playlist') {
-                        var playlistIcon = document.createElement('div');
-                        playlistIcon.innerHTML = '<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-23"></use><path d="m 22.53,21.42 0,6.85 5.66,-3.42 -5.66,-3.42 0,0 z m -11.33,0 9.06,0 0,2.28 -9.06,0 0,-2.28 0,0 z m 0,-9.14 13.6,0 0,2.28 -13.6,0 0,-2.28 0,0 z m 0,4.57 13.6,0 0,2.28 -13.6,0 0,-2.28 0,0 z" fill="#fff" id="ytp-id-23"></path></svg>';
-                        playlistIcon.classList.add('fabext-playlist-icon');
-                        divVideo.appendChild(playlistIcon);
-                    }
-                }
-
-                // add a text to the video
-                if (text != href) {
-                    var divText = document.createElement('div');
-                    divText.style.position = "absolute";
-                    divText.style.bottom = "0";
-                    divText.style.left = "0";
-                    divText.style.width = "100%";
-                    divText.style.height = "15px";
-                    divText.style.fontSize = "10px";
-                    divText.style.paddingLeft = "3px";
-                    divText.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
-                    divText.style.color = "white";
-                    divText.style.display = "flex";
-                    divText.style.justifyContent = "left";
-                    divText.style.alignItems = "center";
-                    divText.innerHTML = text;
-                    divVideo.appendChild(divText);
-                }
-
-                // add a div to block the video
-                var divBlock = document.createElement('div');
-                divBlock.style.position = "absolute";
-                divBlock.style.top = "0";
-                divBlock.style.left = "0";
-                divBlock.style.width = "100%";
-                divBlock.style.height = "100%";
-                divBlock.title = text;
-                divBlock.onclick = function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    carouselBig = carouselDiv.children[0];
-                    while (carouselBig.firstChild) {
-                        carouselBig.removeChild(carouselBig.firstChild);
+                        if (embed.type === 'youtube_playlist') {
+                            var playlistIcon = document.createElement('div');
+                            playlistIcon.innerHTML = '<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-23"></use><path d="m 22.53,21.42 0,6.85 5.66,-3.42 -5.66,-3.42 0,0 z m -11.33,0 9.06,0 0,2.28 -9.06,0 0,-2.28 0,0 z m 0,-9.14 13.6,0 0,2.28 -13.6,0 0,-2.28 0,0 z m 0,4.57 13.6,0 0,2.28 -13.6,0 0,-2.28 0,0 z" fill="#fff" id="ytp-id-23"></path></svg>';
+                            playlistIcon.classList.add('fabext-playlist-icon');
+                            divVideo.appendChild(playlistIcon);
+                        }
                     }
 
-                    var video = document.createElement('iframe');
-                    video.style.width = "100%";
-                    video.style.height = "100%";
-                    video.src = embed.link;
-                    video.title = "Video player";
-                    video.frameborder = "0";
-                    video.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-                    video.referrerpolicy = "strict-origin-when-cross-origin";
-                    video.allowFullscreen = true;
-                    carouselBig.appendChild(video);
-                };
-                divVideo.appendChild(divBlock);
+                    // add a text to the video
+                    if (text != href) {
+                        var divText = document.createElement('div');
+                        divText.style.position = "absolute";
+                        divText.style.bottom = "0";
+                        divText.style.left = "0";
+                        divText.style.width = "100%";
+                        divText.style.height = "15px";
+                        divText.style.fontSize = "10px";
+                        divText.style.paddingLeft = "3px";
+                        divText.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+                        divText.style.color = "white";
+                        divText.style.display = "flex";
+                        divText.style.justifyContent = "left";
+                        divText.style.alignItems = "center";
+                        divText.innerHTML = text;
+                        divVideo.appendChild(divText);
+                    }
 
-                videoToAppend.push(liVdeo);
-            }
+                    // add a div to block the video
+                    var divBlock = document.createElement('div');
+                    divBlock.style.position = "absolute";
+                    divBlock.style.top = "0";
+                    divBlock.style.left = "0";
+                    divBlock.style.width = "100%";
+                    divBlock.style.height = "100%";
+                    divBlock.title = text;
+                    divBlock.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        carouselBig = carouselDiv.children[0];
+                        while (carouselBig.firstChild) {
+                            carouselBig.removeChild(carouselBig.firstChild);
+                        }
+
+                        var video = document.createElement('iframe');
+                        video.style.width = "100%";
+                        video.style.height = "100%";
+                        video.src = embed.link;
+                        video.title = "Video player";
+                        video.frameborder = "0";
+                        video.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+                        video.referrerpolicy = "strict-origin-when-cross-origin";
+                        video.allowFullscreen = true;
+                        carouselBig.appendChild(video);
+                    };
+                    divVideo.appendChild(divBlock);
+
+                    videoToAppend.push(liVdeo);
+                }
+            };
         });
 
         if (videoToAppend.length > 0) {
@@ -306,6 +315,7 @@ function searchForVideo() {
                 carousel.insertBefore(video, carousel.firstChild);
             });
         }
+        carouselDiv.dataset.searchForVideo = true;
     }
 }
 

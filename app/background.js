@@ -3,6 +3,7 @@ const defaultSettings = {
   "Product_AutoSelectLicense": 'personal',
   "Product_DescriptionLogoLink": true,
   "Product_VideoPlayer": true,
+  "Product_MaxVideos": 0,
   "Product_TechnicalDetails": true,
   "Product_SellerDetails": true,
   "Thumbnail_AddToCart": true,

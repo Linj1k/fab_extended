@@ -54,6 +54,13 @@
                         <p class="text-muted fs-8 mb-0">Get videos from a product description to display directly in the carousel with other images</p>
                         <input class="form-check" data-setting="true" type="checkbox" id="Product_VideoPlayer" checked>
                     </div>
+                    <div class="form-check">
+                        <label for="Product_MaxVideos">
+                            Max Videos
+                        </label>
+                        <p class="text-muted fs-8 mb-0">Maximum number of videos displayed (0 = infinite)</p>
+                        <input class="form-control" data-setting="true" type="number" id="Product_MaxVideos" value="0" min="0">
+                    </div>
                     <hr>
                     <div class="form-check">
                         <label for="Product_TechnicalDetails">
@@ -68,7 +75,7 @@
                             Seller Details
                         </label>
                         <p class="text-muted fs-8 mb-0">Add seller information directly to product details (e.g. support email)</p>
-                        <input class="form-check" data-setting="true" type="checkbox" id="Product_SellerDetails" checked>
+                        <input class="form-input" data-setting="true" type="checkbox" id="Product_SellerDetails" checked>
                     </div>
                 </div>
             </div>
