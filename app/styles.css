@@ -140,6 +140,9 @@
     background-size: cover;
     background-repeat: no-repeat;
     opacity: 0.15;
+
+    pointer-events: none;
+    user-select: none;
 }
 
 .fabext-product-cover::after {
