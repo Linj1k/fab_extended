@@ -378,6 +378,8 @@ function addSellerInformationToDetails() {
                         if (!social.url) return;
                         var socialLink = document.createElement('a');
                         socialLink.href = social.url;
+                        socialLink.target = "_blank";
+                        socialLink.rel = "noopener noreferrer";
                         socialLink.className = "fabkit-Typography-root fabkit-Typography--align_start fabkit-Typography--intent-primary fabkit-Text--sm fabkit-Text--regular fabext-social-link";
                         socialLink.innerHTML = fabext_getIcon(social.icon || social.name.toLowerCase(), 'md');
                         socialLink.title = social.name;
