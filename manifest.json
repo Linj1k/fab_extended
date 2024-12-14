@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
     "name": "Fab Extended",
-    "version": "0.1.8",
-    "description": "Improving the Fab.com experience",
+    "version": "0.1.9",
+    "description": "Enhances and adds Fab.com features like bookmarks, video integration and more",
     "permissions": [
         "storage"
     ],

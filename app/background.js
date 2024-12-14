@@ -6,7 +6,9 @@ const defaultSettings = {
   "Product_MaxVideos": 0,
   "Product_TechnicalDetails": true,
   "Product_SellerDetails": true,
+  "Product_CoverBackground": 'product',
   "Thumbnail_AddToCart": true,
+  "Seller_CoverBackground": true,
 };
 
 chrome.runtime.onInstalled.addListener(function() {

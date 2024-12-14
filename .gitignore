@@ -1,4 +1,6 @@
 *.pem
 *.crx
+*.zip
+*.rar
 node_modules
 vendor

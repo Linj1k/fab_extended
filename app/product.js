@@ -16,6 +16,7 @@ function addElementsDom() {
                     fabext_Log(currentProductData);
                     AutoSelectLicense();
                     addSellerInformationToDetails();
+                    addProductCoverBackground();
                 }
             });
         } else if(currentProductData != "loading") {
@@ -24,6 +25,11 @@ function addElementsDom() {
 
         addFavoriteButtonProduct();
         searchForLinks();
+    } else if(window.location.href.includes("/sellers/")) {
+        addSellerCoverBackground();
+    } else {
+        addProductCoverBackground(true);
+        addSellerCoverBackground(true);
     }
 
     var productThumbnails = document.querySelectorAll('.fabkit-Stack-root.fabkit-scale--gapX-layout-3.fabkit-scale--gapY-layout-3.fabkit-Stack--column > .fabkit-scale--radius-3');
@@ -362,6 +368,74 @@ function addSellerInformationToDetails() {
                 }
             }
         });
+    }
+}
+
+function addProductCoverBackground(remove = false) {
+    const main = document.querySelector('div#root > div > main');
+    var cover = main.querySelector('.fabext-product-cover');
+
+    if (remove) {if (cover) {cover.remove();} return;}
+
+    var coverSetting = getSetting("Product_CoverBackground","product");
+    if (coverSetting === "off") return;
+    if (coverSetting === "seller" && currentProductData.user.coverImageUrl == null) {
+        coverSetting = "product";
+    };
+
+    var image;
+    switch (coverSetting) {
+        case "seller":
+            image = currentProductData.user.coverImageUrl;
+            break;
+        default:
+            image = currentProductData.medias[0].mediaUrl;
+            break;
+    }
+
+    if (!image) {if (cover) {cover.remove();} return;}
+
+    if (!cover) {
+        cover = document.createElement('div');
+        cover.className = "fabext-product-cover";
+
+        var gradient = document.createElement('div');
+        gradient.className = "fabext-product-cover-gradient";
+        cover.appendChild(gradient);
+
+        main.insertBefore(cover, main.firstChild);
+    }
+    
+    if (cover && image) {
+        cover.style.backgroundImage = "url('"+image+"')";
+    }
+}
+
+function addSellerCoverBackground(remove = false) {
+    const main = document.querySelector('div#root > div > main');
+    var cover = main.querySelector('.fabext-product-cover');
+
+    if (remove) {if (cover) {cover.remove();} return;}
+
+    var coverSetting = getSetting("Seller_CoverBackground",true);
+    if (coverSetting === false) return;
+
+    const imageDiv = document.querySelector('div.fabkit-Surface-root.fabkit-scale--radius-4.fabkit-Stack-root.fabkit-Stack--justify_center.fabkit-Stack--column');
+    var image = getComputedStyle(imageDiv).getPropertyValue('--ProfileHeader_backgroundImage');
+
+    if (!cover) {
+        cover = document.createElement('div');
+        cover.className = "fabext-product-cover";
+
+        var gradient = document.createElement('div');
+        gradient.className = "fabext-product-cover-gradient";
+        cover.appendChild(gradient);
+
+        main.insertBefore(cover, main.firstChild);
+    }
+    
+    if (cover && image) {
+        cover.style.backgroundImage = image;
     }
 }
 
