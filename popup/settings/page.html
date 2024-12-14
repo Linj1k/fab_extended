@@ -55,6 +55,16 @@
                         <input class="form-check" data-setting="true" type="checkbox" id="Product_VideoPlayer" checked>
                     </div>
                     <div class="form-check">
+                        <label for="Product_VideoPlayer_Order">
+                            Order
+                        </label>
+                        <p class="text-muted fs-8 mb-0">Choose the order in which videos are added to the carousel</p>
+                        <select class="form-select" data-setting="true" id="Product_VideoPlayer_Order">
+                            <option value="first" selected>First</option>
+                            <option value="last">In Last</option>
+                        </select>
+                    </div>
+                    <div class="form-check">
                         <label for="Product_MaxVideos">
                             Max Videos
                         </label>
@@ -77,6 +87,18 @@
                         <p class="text-muted fs-8 mb-0">Add seller information directly to product details (e.g. support email)</p>
                         <input class="form-input" data-setting="true" type="checkbox" id="Product_SellerDetails" checked>
                     </div>
+                    <hr>
+                    <div class="form-check">
+                        <label for="Product_CoverBackground">
+                            Cover Background
+                        </label>
+                        <p class="text-muted fs-8 mb-0">Add the first image of the product or the image of the salesperson in the background, fading to give it a modern look.</p>
+                        <select class="form-select" data-setting="true" id="Product_CoverBackground">
+                            <option value="off">Disable</option>
+                            <option value="product" selected>Product Image</option>
+                            <option value="seller">Seller Image</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -94,6 +116,24 @@
                         </label>
                         <p class="text-muted fs-8 mb-0">Add a shopping cart icon to thumbnails</p>
                         <input class="form-check" data-setting="true" type="checkbox" id="Thumbnail_AddToCart" checked>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingSellerProfile">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSellerProfile" aria-expanded="false" aria-controls="collapseSellerProfile">
+                    Seller Profile
+                </button>
+            </h2>
+            <div id="collapseSellerProfile" class="accordion-collapse collapse show" aria-labelledby="headingSellerProfile">
+                <div class="accordion-body">
+                    <div class="form-check">
+                        <label for="Seller_CoverBackground">
+                            Cover Background
+                        </label>
+                        <p class="text-muted fs-8 mb-0">Add the seller's image in the background, fading in to give a modern look.</p>
+                        <input class="form-check" data-setting="true" type="checkbox" id="Seller_CoverBackground" checked>
                     </div>
                 </div>
             </div>

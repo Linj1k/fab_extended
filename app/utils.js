@@ -69,11 +69,11 @@ function fabext_GetCSRFToken() {
 }
 
 function fabext_SendRequest(method, url, data, callback) {
-    fabext_Log('[Fab Extended] Request:', method, url, data);
+    // fabext_Log('[Fab Extended] Request:', method, url, data);
 
     // check if the data is not already on the cache
     if (FabData && FabData['/i/'+url]) {
-        fabext_Log('[Fab Extended] Cache hit:', '/i/'+url);
+        // fabext_Log('[Fab Extended] Cache hit:', '/i/'+url);
         callback({
             readyState: 4,
             status: 200,
@@ -89,7 +89,7 @@ function fabext_SendRequest(method, url, data, callback) {
     xhr.setRequestHeader("x-csrftoken", fabext_GetCSRFToken());
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
-            fabext_Log('[Fab Extended] Response:', method, url, data, xhr.responseText);
+            // fabext_Log('[Fab Extended] Response:', method, url, data, xhr.responseText);
             if (xhr.status === 200) {
                 if (!FabData) {
                     FabData = {};

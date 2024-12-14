@@ -127,3 +127,56 @@
     background: rgba(0, 0, 0, .7);
     border-radius: 4px;
 }
+
+.fabext-product-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 78%;
+    object-fit: cover;
+    border-radius: 4px;
+    background-position: bottom;
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0.15;
+}
+
+.fabext-product-cover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* circle gradient */
+    background: radial-gradient(circle, rgba(0, 0, 0, 0) 0%, #101014 90%);
+    border-radius: 4px;
+}
+
+.fabext-product-cover-gradient {
+    /* bottom gradient */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #101014 100%);
+    border-radius: 4px;
+}
+
+@media (max-width: 1300px) {
+    .fabext-product-cover {
+        height: 60%;
+    }
+}
+
+@media (max-width: 950px) {
+    .fabext-product-cover {
+        height: 40%;
+    }
+}
+
+.fabext-social-link:hover {
+    color: #61cdff;
+}
