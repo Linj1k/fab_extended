@@ -317,7 +317,11 @@ function searchForVideo() {
         if (videoToAppend.length > 0) {
             // add the video to the carousel (revert the order)
             videoToAppend.reverse().forEach(function(video) {
-                carousel.insertBefore(video, carousel.firstChild);
+                if (getSetting("Product_VideoPlayer_Order","first") === "first") {
+                    carousel.insertBefore(video, carousel.firstChild);
+                } else {
+                    carousel.appendChild(video);
+                }
             });
         }
         carouselDiv.dataset.searchForVideo = true;
