@@ -176,3 +176,7 @@
         height: 40%;
     }
 }
+
+.fabext-social-link:hover {
+    color: #61cdff;
+}
