@@ -5,6 +5,7 @@ function AutoClaim_Dom(remove) {
         if (AutoClaimButton !== null) {
             AutoClaimButton.remove();
         }
+        return;
     }
     
     if (getSetting("Thumbnail_AutoClaimFree","cart") === "off") return;
