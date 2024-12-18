@@ -9,6 +9,7 @@ This extension adds new features and improves the user experience on the Fab web
 - Video Player (Get videos from a product description to display directly in the carousel with other images)
 - Added icon to well-known links in description
 - The seller's support email, social links is displayed directly in the product details.
+- Button to empty the cart
 - Settings Page (Modify extension settings to improve your experience)
 
 ## Images
