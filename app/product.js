@@ -17,6 +17,7 @@ function addElementsDom() {
                     fabext_Log(currentProductData);
                     AutoSelectLicense();
                     addSellerInformationToDetails();
+                    addSellerCoverBackground(true);
                     addProductCoverBackground();
                 }
             });
@@ -32,11 +33,15 @@ function addElementsDom() {
         addSellerCoverBackground();
         AutoClaim_Dom(true);
     } else if(window.location.href == "https://www.fab.com/" || window.location.href.includes("/channels/") || window.location.href.includes("/category/") || window.location.href.includes("/blade/") || window.location.href.includes("/search")) {
+        addProductCoverBackground(true);
+        addSellerCoverBackground(true);
         AutoClaim_Dom();
     } else {
         addProductCoverBackground(true);
         addSellerCoverBackground(true);
+        AutoClaim_Dom(true);
     }
+    ClearCartButton()
 
     var productThumbnails = document.querySelectorAll(productThumbnailsClass);
     productThumbnails.forEach(function(thumbnail) {
