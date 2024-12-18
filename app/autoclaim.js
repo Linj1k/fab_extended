@@ -45,6 +45,10 @@ function AutoClaim_Button(e) {
         const uid = link.split('/').pop();
         productsUID.push(uid);
     });
+    if (productsUID.length === 0) {
+        fabext_sendNotification(`No recoverable products found!`)
+        return;
+    };
 
     if (!confirm(`Do you really want to claim all the free products (${productsUID.length}) currently displayed on the page?`)) {
         button.disabled = false;
@@ -73,49 +77,63 @@ function AutoClaim_Button(e) {
         }
     }
 
-    productsUID.forEach(function(uid, index) {
-        fabext_SendRequest("GET", "listings/"+uid, null, function(response) {
-            if (response.readyState === 4 && response.status === 200) {
-                var listingsData = JSON.parse(response.responseText);
+    fabext_SendRequest('GET', 'cart', null, function(response) {
+        if (response.readyState === 4 && response.status === 200) {
+            var CartData = JSON.parse(response.responseText);
+            
+            productsUID.forEach(function(uid, index) {
+                fabext_SendRequest("GET", "listings/"+uid, null, function(response) {
+                    if (response.readyState === 4 && response.status === 200) {
+                        var listingsData = JSON.parse(response.responseText);
 
-                var licenses = listingsData.licenses;
-                // find the free license
-                var discountedLicense = null;
-                var freeLicense = licenses.find(license => license.priceTier.price === 0);
-                if (!freeLicense) {
-                    // discountedPrice
-                    discountedLicense = licenses.find(license => license.priceTier.discountedPrice == 0);
-                    if (!discountedLicense) {
+                        var licenses = listingsData.licenses;
+                        // find the free license
+                        var discountedLicense = null;
+                        var freeLicense = licenses.find(license => license.priceTier.price === 0);
+                        if (!freeLicense) {
+                            // discountedPrice
+                            discountedLicense = licenses.find(license => license.priceTier.discountedPrice == 0);
+                            if (!discountedLicense) {
+                                fabext_sendNotification(`${listingsData.title} cannot be claimed for free!`);
+                                onClaimed(uid,listingsData);
+                                return;
+                            }
+                            
+                            freeLicense = discountedLicense;
+                        }
+                        const listingLicenseId = freeLicense.listingLicenseId;
+
+                        if (setting === "cart" || discountedLicense) {
+                            // find if the item is already in the cart
+                            var item = CartData.items.find(item => item.listingLicenseId === listingLicenseId);
+                            if (item) {
+                                onClaimed(uid);
+                                return;
+                            }
+
+                            
+                            fabext_SendRequest("POST", "cart/items", JSON.stringify({
+                                "listingLicense": listingLicenseId,
+                            }), function(response) {
+                                if (response.readyState === 4) {
+                                    onClaimed(uid,listingsData);
+                                }
+                            });
+                        } else {
+                            fabext_SendRequest("POST", "listings/"+listingsData.uid+"/add-to-library", JSON.stringify({
+                                "offer_id": freeLicense.offerId,
+                            }), function(response) {
+                                if (response.readyState === 4) {
+                                    onClaimed(uid,listingsData);
+                                }
+                            });
+                        }
+                    } else if (response.readyState === 4) {
                         fabext_sendNotification(`${listingsData.title} cannot be claimed for free!`);
-                        onClaimed(uid,listingsData);
-                        return;
+                        onClaimed(uid);
                     }
-                    
-                    freeLicense = discountedLicense;
-                }
-                const listingLicenseId = freeLicense.listingLicenseId;
-
-                if (setting === "cart" || discountedLicense) {
-                    fabext_SendRequest("POST", "cart/items", JSON.stringify({
-                        "listingLicense": listingLicenseId,
-                    }), function(response) {
-                        if (response.readyState === 4) {
-                            onClaimed(uid,listingsData);
-                        }
-                    });
-                } else {
-                    fabext_SendRequest("POST", "listings/"+listingsData.uid+"/add-to-library", JSON.stringify({
-                        "offer_id": freeLicense.offerId,
-                    }), function(response) {
-                        if (response.readyState === 4) {
-                            onClaimed(uid,listingsData);
-                        }
-                    });
-                }
-            } else if (response.readyState === 4) {
-                fabext_sendNotification(`${listingsData.title} cannot be claimed for free!`);
-                onClaimed(uid);
-            }
-        });
+                });
+            });
+        }
     });
 }
