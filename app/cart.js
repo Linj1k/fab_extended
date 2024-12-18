@@ -91,6 +91,7 @@ Do you want to use the personal license?\n
                                                 fabext_Log(`Item ${listingsData.title} (${listingsData.uid}) added to cart`);
 
                                                 addToCartButton.style.color = "#ADFF2F";
+                                                brainUpdateCart()
                                                 fabext_sendNotification(`<br>${listingsData.title} added to cart!<p style='font-size: .5rem;'>To see the product in your cart, you need to refresh your page.</p>`);
                                             }
                                         });
@@ -108,4 +109,76 @@ Do you want to use the personal license?\n
         contentDiv.appendChild(iconDiv);
         topRight.appendChild(contentDiv);
     }
+}
+
+function ClearCartButton() {
+    const createClearButton = (parent) => {
+        var clearCartButton = parent.querySelector('#clearCartButton');
+        if (!clearCartButton) {
+            parent.style.display = 'flex';
+            parent.style.justifyContent = 'space-between';
+            parent.style.alignItems = 'center';
+
+            clearCartButton = document.createElement('button');
+            clearCartButton.id = 'clearCartButton';
+            clearCartButton.classList.add('fabkit-Button-root', 'fabkit-Button--ghost', 'fabkit-Button--md', 'fabkit-Button--icon', 'fabkit-Button--danger', 'fabkit-Button--fullWidth', 'fabkit-Button--iconOnly', 'fabkit-Button--blurify');
+            clearCartButton.innerHTML = fabext_getIcon('trash', 'md');
+            clearCartButton.style.marginTop = '10px';
+            clearCartButton.onclick = ClearCart;
+
+            parent.appendChild(clearCartButton);
+        }
+    }
+
+    if(window.location.href.includes("/cart")) {
+        const cartTitle = document.querySelector('.fabkit-Typography-root.fabkit-Typography--align-start.fabkit-Typography--intent-primary.fabkit-Typography--ellipsis.fabkit-Heading--2xl');
+        // fabext_Log("/cart", cartTitle)
+        if(cartTitle) {
+            createClearButton(cartTitle);
+        };
+    }
+
+    const cartPopup = document.querySelector('.fabkit-Dropdown-container.fabkit-MegaMenu-navMenuContent')
+    if (cartPopup) {
+        const cartTitle = cartPopup.querySelector('.fabkit-Typography-root.fabkit-Typography--align-start.fabkit-Typography--intent-primary.fabkit-Heading--lg');
+        const items = cartPopup.querySelectorAll('a.fabkit-Stack-root.fabkit-scale--gapX-layout-5.fabkit-scale--gapY-layout-5.fabkit-Stack--fullWidth');
+        // fabext_Log("Cart Popup", cartTitle, items)
+        if(!cartTitle || !items) return;
+
+        createClearButton(cartTitle)
+    }
+}
+
+function ClearCart() {
+    if (!confirm('Do you really want to clear your cart? (The page will be refreshed after)')) return;
+
+    fabext_SendRequest('GET', 'cart', null, function(response) {
+        if (response.readyState === 4 && response.status === 200) {
+            var CartData = JSON.parse(response.responseText);
+
+            var success = 0
+            const onSuccess = (item) => {
+                success++;
+                if (CartData.items.length === success)
+                    window.location.reload(); // Todo: replace with brainUpdateCart() function
+            }
+
+            CartData.items.forEach(item => {
+                fabext_SendRequest('DELETE', 'cart/items/'+item.uid, null, function(response) {
+                    if (response.readyState === 4) {
+                        onSuccess(item)
+
+                        if (response.status === 204)
+                            fabext_Log(`Item ${item.title} (${item.uid}) removed from cart`);
+                    }
+                });
+            });
+        }
+    });
+}
+
+/**
+ * TODO: Find a way to update the basket without refreshing the page
+*/
+function brainUpdateCart() {
 }

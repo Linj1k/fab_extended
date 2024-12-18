@@ -1,3 +1,4 @@
+const productThumbnailsClass = '.fabkit-Stack-root.fabkit-scale--gapX-layout-3.fabkit-scale--gapY-layout-3.fabkit-Stack--column > .fabkit-scale--radius-3';
 var currentProductData = null;
 var currentSellerData = null;
 function addElementsDom() {
@@ -16,6 +17,7 @@ function addElementsDom() {
                     fabext_Log(currentProductData);
                     AutoSelectLicense();
                     addSellerInformationToDetails();
+                    addSellerCoverBackground(true);
                     addProductCoverBackground();
                 }
             });
@@ -25,14 +27,23 @@ function addElementsDom() {
 
         addFavoriteButtonProduct();
         searchForLinks();
+        AutoClaim_Dom(true);
     } else if(window.location.href.includes("/sellers/")) {
+        addProductCoverBackground(true);
         addSellerCoverBackground();
+        AutoClaim_Dom(true);
+    } else if(window.location.href == "https://www.fab.com/" || window.location.href.includes("/channels/") || window.location.href.includes("/category/") || window.location.href.includes("/blade/") || window.location.href.includes("/search")) {
+        addProductCoverBackground(true);
+        addSellerCoverBackground(true);
+        AutoClaim_Dom();
     } else {
         addProductCoverBackground(true);
         addSellerCoverBackground(true);
+        AutoClaim_Dom(true);
     }
+    ClearCartButton()
 
-    var productThumbnails = document.querySelectorAll('.fabkit-Stack-root.fabkit-scale--gapX-layout-3.fabkit-scale--gapY-layout-3.fabkit-Stack--column > .fabkit-scale--radius-3');
+    var productThumbnails = document.querySelectorAll(productThumbnailsClass);
     productThumbnails.forEach(function(thumbnail) {
         if (thumbnail.tagName !== 'DIV') return;
 
@@ -55,9 +66,19 @@ function AutoSelectLicense() {
                 licenseOptions = licenseOptions.children[0];
 
                 const list = licenseOptions.children[1];
+                const listItems = Array.from(list.children);
+                
+                listItems.forEach((option, index) => {
+                    if (option.getAttribute('aria-selected') === "true") {
+                        option.click();
+                        parent.dataset.autoSelectLicense = true;
+                        return;
+                    }
+                });
 
+                if (parent.dataset.autoSelectLicense) return;
                 // option with data-value = parent.dataset.autoSelectLicenseId
-                Array.from(list.children).forEach((option, index) => {
+                listItems.forEach((option, index) => {
                     if (option.dataset.value === parent.dataset.autoSelectLicenseId) {
                         option.click();
                         parent.dataset.autoSelectLicense = true;
@@ -65,10 +86,9 @@ function AutoSelectLicense() {
                     }
                 });
 
-                if (!parent.dataset.autoSelectLicense) {
-                    list.children[0].click();
-                    parent.dataset.autoSelectLicense = true;
-                }
+                if (parent.dataset.autoSelectLicense) return;
+                list.children[0].click();
+                parent.dataset.autoSelectLicense = true;
             }
         } else {
             var licenses = currentProductData.licenses;

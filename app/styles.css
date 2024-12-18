@@ -183,3 +183,21 @@
 .fabext-social-link:hover {
     color: #61cdff;
 }
+
+#AutoClaimButton {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 9999;
+    background-color: #212124;
+    border-radius: 10px;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 0 0 1px #505050;
+}
+
+#AutoClaimButton:hover {
+    background-color: #2d2d2d;
+}
