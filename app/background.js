@@ -9,6 +9,7 @@ const defaultSettings = {
   "Product_SellerDetails": true,
   "Product_CoverBackground": 'product',
   "Thumbnail_AddToCart": true,
+  "Thumbnail_AutoClaimFree": "cart",
   "Seller_CoverBackground": true,
 };
 

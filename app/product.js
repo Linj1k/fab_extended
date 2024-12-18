@@ -1,3 +1,4 @@
+const productThumbnailsClass = '.fabkit-Stack-root.fabkit-scale--gapX-layout-3.fabkit-scale--gapY-layout-3.fabkit-Stack--column > .fabkit-scale--radius-3';
 var currentProductData = null;
 var currentSellerData = null;
 function addElementsDom() {
@@ -25,14 +26,19 @@ function addElementsDom() {
 
         addFavoriteButtonProduct();
         searchForLinks();
+        AutoClaim_Dom(true);
     } else if(window.location.href.includes("/sellers/")) {
+        addProductCoverBackground(true);
         addSellerCoverBackground();
+        AutoClaim_Dom(true);
+    } else if(window.location.href == "https://www.fab.com/" || window.location.href.includes("/channels/") || window.location.href.includes("/category/") || window.location.href.includes("/blade/") || window.location.href.includes("/search")) {
+        AutoClaim_Dom();
     } else {
         addProductCoverBackground(true);
         addSellerCoverBackground(true);
     }
 
-    var productThumbnails = document.querySelectorAll('.fabkit-Stack-root.fabkit-scale--gapX-layout-3.fabkit-scale--gapY-layout-3.fabkit-Stack--column > .fabkit-scale--radius-3');
+    var productThumbnails = document.querySelectorAll(productThumbnailsClass);
     productThumbnails.forEach(function(thumbnail) {
         if (thumbnail.tagName !== 'DIV') return;
 
