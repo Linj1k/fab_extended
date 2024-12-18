@@ -55,9 +55,19 @@ function AutoSelectLicense() {
                 licenseOptions = licenseOptions.children[0];
 
                 const list = licenseOptions.children[1];
+                const listItems = Array.from(list.children);
+                
+                listItems.forEach((option, index) => {
+                    if (option.getAttribute('aria-selected') === "true") {
+                        option.click();
+                        parent.dataset.autoSelectLicense = true;
+                        return;
+                    }
+                });
 
+                if (parent.dataset.autoSelectLicense) return;
                 // option with data-value = parent.dataset.autoSelectLicenseId
-                Array.from(list.children).forEach((option, index) => {
+                listItems.forEach((option, index) => {
                     if (option.dataset.value === parent.dataset.autoSelectLicenseId) {
                         option.click();
                         parent.dataset.autoSelectLicense = true;
@@ -65,10 +75,9 @@ function AutoSelectLicense() {
                     }
                 });
 
-                if (!parent.dataset.autoSelectLicense) {
-                    list.children[0].click();
-                    parent.dataset.autoSelectLicense = true;
-                }
+                if (parent.dataset.autoSelectLicense) return;
+                list.children[0].click();
+                parent.dataset.autoSelectLicense = true;
             }
         } else {
             var licenses = currentProductData.licenses;
