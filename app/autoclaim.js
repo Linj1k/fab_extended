@@ -47,6 +47,7 @@ function AutoClaim_Button(e) {
     });
     if (productsUID.length === 0) {
         fabext_sendNotification(`No recoverable products found!`)
+        button.disabled = false;
         return;
     };
 
