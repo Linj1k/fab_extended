@@ -2,7 +2,7 @@
 function addElementsDom() {
     ClearCartButton()
     addElementsThumbnail()
-    addIndexCoverBackground(window.location.href === "https://www.fab.com")
+    addIndexCoverBackground(window.location.href !== "https://www.fab.com/")
 
     if(window.location.href.includes("/listings/")) {
         addElementsProduct();
@@ -12,7 +12,7 @@ function addElementsDom() {
         return;
     }
     
-    const canShowAutoClaim = !(window.location.href == "https://www.fab.com" || window.location.href.includes("/channels/") || window.location.href.includes("/category/") || window.location.href.includes("/blade/") || window.location.href.includes("/search"));
+    const canShowAutoClaim = !(window.location.href == "https://www.fab.com/" || window.location.href.includes("/channels/") || window.location.href.includes("/category/") || window.location.href.includes("/blade/") || window.location.href.includes("/search"));
     AutoClaim_Dom(canShowAutoClaim);
     addProductCoverBackground(true);
     addSellerCoverBackground(true);
