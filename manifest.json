@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Fab Extended",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "description": "Enhances and adds Fab.com features like bookmarks, video integration and more",
     "permissions": [
         "storage"
@@ -9,8 +9,34 @@
     "content_scripts": [
       {
         "matches": ["https://www.fab.com/*"],
-        "js": ["app/toastifyjs/toastify-js.js","app/utils.js", "app/storage.js", "app/settings.js", "app/favorite.js", "app/cart.js", "app/technicalDetails.js", "app/autoclaim.js", "app/product.js"],
-        "css": ["app/toastifyjs/toastify.min.css","app/styles.css"]
+        "js": [
+          "app/utils/toastifyjs/toastify-js.js",
+          "app/utils/utils.js",
+          "app/utils/storage.js",
+          
+          "app/features/Settings.js",
+          "app/features/Favorite.js",
+          "app/features/Cart.js",
+          "app/features/CoverBackground.js",
+
+          "app/features/thumbnail/AutoClaim.js",
+          "app/features/thumbnail/Thumbnail.js",
+
+          "app/features/product/TechnicalDetails.js",
+          "app/features/product/SellerInformations.js",
+          "app/features/product/AutoSelectLicense.js",
+          "app/features/product/searchForLinks.js",
+          "app/features/product/searchForVideo.js",
+          "app/features/product/product.js",
+          
+          "app/features/seller/Seller.js",
+
+          "app/main.js"
+        ],
+        "css": [
+          "app/utils/toastifyjs/toastify.min.css",
+          "app/styles.css"
+        ]
       }
     ],
     "background": {
