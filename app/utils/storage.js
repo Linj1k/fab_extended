@@ -63,6 +63,10 @@ function saveFavorite(heartButton,url,notify) {
         localStorage.setItem('favorites', JSON.stringify(favorites));
 
         updateStorage()
+        const favoriteBagde = document.getElementById('favorite-badge');
+        if (favoriteBagde) {
+            favoriteBagde.innerHTML = favorites.length;
+        }
     }
 }
 function removeFavorite(url,notify) {
@@ -76,6 +80,12 @@ function removeFavorite(url,notify) {
         localStorage.setItem('favorites', JSON.stringify(favorites));
 
         updateStorage()
+
+        
+        const favoriteBagde = document.getElementById('favorite-badge');
+        if (favoriteBagde) {
+            favoriteBagde.innerHTML = favorites.length;
+        }
     }
 }
 function isInFavorite(url) {

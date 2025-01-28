@@ -143,6 +143,11 @@ function addFavoriteButtonToNavbar() {
     if (document.getElementById('favorite-button') === null) {
         var actions = document.querySelector('.fabkit-MegaMenu-actions');
         if (actions) {
+            var favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+            var spanFavorite = document.createElement("span");
+            spanFavorite.classList.add("fabkit-StickyElement-root", "fabkit-StickyElement--top-right", "fabkit-StickyElement--show");
+
             var favoriteButton = document.createElement("button");
             favoriteButton.innerHTML = fabext_getIcon('heart');
             favoriteButton.id = "favorite-button";
@@ -150,6 +155,14 @@ function addFavoriteButtonToNavbar() {
             favoriteButton.type = "button";
             favoriteButton.setAttribute("aria-label", "Favorites");
             favoriteButton.title = "Favorites";
+            spanFavorite.appendChild(favoriteButton);
+
+            var badge = document.createElement("span");
+            badge.classList.add("fabkit-Badge-root", "fabkit-Badge--filled", "fabkit-Badge--primary", "fabkit-Badge--sm", "Slx1EfM1", "fabkit-StickyElement-element");
+            badge.id = "favorite-badge";
+            badge.innerText = favorites.length;
+            badge.style.transform = "translate(6px, -2px)";
+            spanFavorite.appendChild(badge);
             
             var popup = createFavoritePopup()
             
@@ -178,7 +191,7 @@ function addFavoriteButtonToNavbar() {
                 }, 100);
             });
 
-            actions.insertBefore(favoriteButton, actions.firstChild);
+            actions.insertBefore(spanFavorite, actions.firstChild);
             document.querySelector("body").appendChild(popup);
         }
     }
