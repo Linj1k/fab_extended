@@ -9,9 +9,7 @@ function AutoSelectLicense() {
         if (license.getAttribute('aria-expanded') !== 'false') {
             var licenseOptions = document.querySelector('.fabkit-Dropdown-container');
             if (licenseOptions) {
-                licenseOptions = licenseOptions.children[0];
-
-                const list = licenseOptions.children[1];
+                const list = licenseOptions.querySelector("ul")
                 const listItems = Array.from(list.children);
                 
                 listItems.forEach((option, index) => {
