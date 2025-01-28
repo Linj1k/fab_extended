@@ -3,6 +3,7 @@ This extension adds new features and improves the user experience on the Fab web
 
 ## Features
 - Favorites (Button on product page, Button on thumbnails, Button/Menu in navbar, Search bar)
+- New button to automatically add free products to the shopping cart
 - Add To Cart button on thumbnails
 - Bring back Technical Details on file format (as had before Unreal Engine marketplace)
 - Auto-select License (Automatically selects the personal license, if this is not possible, the first license will be selected)

@@ -1,5 +1,6 @@
 console.log('Background script loaded');
 const defaultSettings = {
+  "Index_CoverBackground": true,
   "Product_AutoSelectLicense": 'personal',
   "Product_DescriptionLogoLink": true,
   "Product_VideoPlayer": true,
