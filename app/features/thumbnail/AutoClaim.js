@@ -32,9 +32,12 @@ function AutoClaim_Button(e) {
     var productThumbnails = document.querySelectorAll(productThumbnailsClass);
     productThumbnails.forEach(function(thumbnail) {
         if (thumbnail.tagName !== 'DIV') return;
+        let parent = thumbnail.parentElement;
+        if (!parent) return;
+        if (!parent.querySelector('.fabkit-Stack-root.fabkit-Stack--align_center.fabkit-scale--gapX-spacing-2.fabkit-scale--gapY-spacing-2')) return;
 
         // check if the product is free
-        const productPrice = thumbnail.parentElement.querySelector('.fabkit-Stack-root.fabkit-scale--gapX-spacing-2.fabkit-scale--gapY-spacing-2 > .fabkit-Stack-root.fabkit-scale--gapX-spacing-1.fabkit-scale--gapY-spacing-1 > .fabkit-Typography-root.fabkit-Typography--align-start.fabkit-Typography--intent-primary.fabkit-Text--lg.fabkit-Text--regular');
+        const productPrice = thumbnail.parentElement.querySelector('.fabkit-Stack-root.fabkit-Stack--align_center.fabkit-scale--gapX-spacing-2.fabkit-scale--gapY-spacing-2 > .fabkit-Stack-root.fabkit-scale--gapX-spacing-1.fabkit-scale--gapY-spacing-1 > .fabkit-Typography-root.fabkit-Typography--align-start.fabkit-Typography--intent-primary.fabkit-Text--sm.fabkit-Text--regular');
         if (productPrice === null) return;
         const productPriceText = productPrice.textContent;
         if (productPriceText.includes(",") || productPriceText.includes(".")) return;

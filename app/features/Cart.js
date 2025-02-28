@@ -8,15 +8,8 @@ function addToCartThumbnail(thumbnail) {
         currentUrl = currentUrl.href;
         var uid = currentUrl.split('/').pop();
         
-        var contentDiv = document.createElement("div");
-        contentDiv.classList.add("fabkit-Stack-root", "fabkit-Stack--align_center", "fabkit-scale--gapX-spacing-2", "fabkit-scale--gapY-spacing-2");
-        contentDiv.id = "thumbnail-addToCartButton";
-        contentDiv.style.display = "flex";
-        contentDiv.style.justifyContent = "end";
-        contentDiv.style.marginTop = "5px";
-
-        var iconDiv = document.createElement("div");
-        iconDiv.classList.add("fabkit-Badge-root", "fabkit-Badge--filled", "fabkit-Badge--gray", "fabkit-Badge--md", "fabkit-Badge--iconOnly", "fabkit-Badge--blurify", "Nj5DrLsA", "jfHwYlH0", "MoIH083o");
+        const categoryElement = parent.parentElement.querySelector('.fabkit-Thumbnail-item.fabkit-Thumbnail--bottom-left > .fabkit-Badge-root.fabkit-Badge--filled.fabkit-Badge--gray.fabkit-Badge--md.fabkit-Badge--blurify > .fabkit-Badge-label');
+        if (!categoryElement) return;
 
         var addToCartButton = document.createElement("button");
         var topRight = thumbnail.querySelector('.fabkit-Thumbnail-item.fabkit-Thumbnail--top-right')
@@ -24,29 +17,33 @@ function addToCartThumbnail(thumbnail) {
         // Create topRight div if it doesn't exist
         if (topRight === null) {
             var topRight = document.createElement("div");
-            topRight.classList.add("fabkit-Thumbnail-item", "fabkit-Thumbnail--top-right",  "q2jjQjlm", "YFuShsDk");
+            topRight.classList.add("fabkit-Thumbnail-item", "fabkit-Thumbnail--top-right", "Cla8eRIg", "N2MpToNm");
             thumbnail.appendChild(topRight);
-        } else {
-            contentDiv.classList.add("fabkit-Thumbnail-addToCartButton")
         }
 
-        addToCartButton.style.display = "flex";
+        addToCartButton.classList.add("fabkit-Button-root", "fabkit-Button--icon", "fabkit-Button--rounded", "fabkit-Button--sm", "fabkit-Button--blurry");
+        addToCartButton.id = "thumbnail-addToCartButton";
+        addToCartButton.style.marginLeft = "5px";
         addToCartButton.type = "button";
-        addToCartButton.innerHTML = fabext_getIcon('shopping-cart','xs');
         addToCartButton.setAttribute("aria-label", "Add to cart");
         addToCartButton.title = "Add to cart";
 
         // Add data attributes to the addToCartButton
-        addToCartButton.dataset.category = parent.parentNode.querySelector('.fabkit-Typography-root.fabkit-Typography--align-start.fabkit-Typography--intent-secondary.fabkit-Text--md.fabkit-Text--regular.fabkit-Stack-root.fabkit-Stack--align_center.fabkit-scale--gapX-spacing-2.fabkit-scale--gapY-spacing-2').innerText;
+        addToCartButton.dataset.category = categoryElement.innerText;
         addToCartButton.dataset.category = addToCartButton.dataset.category.split('\n').pop();
         addToCartButton.dataset.title = parent.parentNode.querySelector('.fabkit-Typography-ellipsisWrapper').innerText;
         addToCartButton.dataset.image = parent.querySelector('img').src;
+
+        // span, fabkit-Button-label
+        var span = document.createElement("span");
+        span.classList.add("fabkit-Button-label");
+        span.innerHTML = fabext_getIcon('shopping-cart','sm');
 
         // Add event listener to the addToCartButton to add or remove favorite
         addToCartButton.addEventListener('click', function(e) {
             e.stopPropagation();
 
-            fabext_SendRequest('GET', 'users/me/acquired-content?listing_ids='+uid, null, function(response) {
+            fabext_SendRequest('GET', 'users/me/listings-states?listing_ids='+uid, null, function(response) {
                 if (response.readyState === 4 && response.status === 200) {
                     var acquiredData = JSON.parse(response.responseText);
 
@@ -105,9 +102,8 @@ Do you want to use the personal license?\n
         });
 
 
-        iconDiv.appendChild(addToCartButton);
-        contentDiv.appendChild(iconDiv);
-        topRight.appendChild(contentDiv);
+        addToCartButton.appendChild(span);
+        topRight.appendChild(addToCartButton);
     }
 }
 
