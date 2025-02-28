@@ -12,6 +12,7 @@ const defaultSettings = {
   "Thumbnail_AddToCart": true,
   "Thumbnail_AutoClaimFree": "cart",
   "Seller_CoverBackground": true,
+  "Favorites_State": true,
 };
 
 chrome.runtime.onInstalled.addListener(function() {

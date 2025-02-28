@@ -3,7 +3,7 @@ function addSellerInformationToDetails() {
 
     if (currentSellerData != "loading" && typeof currentSellerData === "object") {
         currentSellerData = "loading";
-        fabext_SendRequest("GET", "sellers/"+currentProductData.user.sellerName+"/profile", null, function(response) {
+        fabext_SendRequest("GET", "sellers/name/"+currentProductData.user.sellerName+"/profile", null, function(response) {
             if (response.readyState === 4 && response.status === 200) {
                 currentSellerData = JSON.parse(response.responseText);
                 fabext_Log(currentSellerData);

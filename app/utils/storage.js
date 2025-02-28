@@ -96,12 +96,14 @@ function isInFavorite(url) {
 }
 function updateHeartButton(heartButton,url,md = false) {
     if (!heartButton || !url) return;
+    let span = heartButton.querySelector('span');
+    if (!span) return;
 
     if (isInFavorite(url)) {
-        heartButton.style.color = 'red';
-        heartButton.innerHTML = fabext_getIcon('heart-filled', md ? 'md' : 'xs');
+        span.style.color = 'red';
+        span.innerHTML = fabext_getIcon('heart-filled', md ? 'md' : 'sm');
     } else {
-        heartButton.style.color = 'inherit';
-        heartButton.innerHTML = fabext_getIcon('heart', md ? 'md' : 'xs');
+        span.style.color = 'inherit';
+        span.innerHTML = fabext_getIcon('heart', md ? 'md' : 'sm');
     }
 }

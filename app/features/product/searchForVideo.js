@@ -1,3 +1,4 @@
+let currentCarouselButton = null;
 function searchForVideo() {
     if (getSetting("Product_VideoPlayer",true) === false) return;
 
@@ -55,6 +56,29 @@ function searchForVideo() {
         } else {
             carousel = carousel.querySelector('ol');
         }
+
+        // add onclick on the big carousel to remove the video
+        if (carousel && carouselBig) {
+            let Img = carouselBig.querySelector('img');
+            
+            // foreach on all images in the carousel ol to add the onclick
+            carousel.querySelectorAll('button').forEach(function(b) {
+                b.onclick = function(e) {
+                    let OldVideo = carouselBig.querySelector('iframe');
+                    if (OldVideo) {
+                        carouselBig.removeChild(OldVideo);
+                    }
+                    Img.style.display = "block";
+                    
+                    if (currentCarouselButton && currentCarouselButton != b && currentCarouselButton.id == "fabext-VideoPlayer") {
+                        currentCarouselButton.classList.remove("iioVBYdA");
+                    }
+                    currentCarouselButton = b;
+                    b.parentElement.classList.add("iioVBYdA");
+                };
+            });
+        }
+
         // search all the links in the description
         const maxVideos = getSetting("Product_MaxVideos", 0);
         const videoToAppend = [];
@@ -81,6 +105,7 @@ function searchForVideo() {
 
                     var divVideo = document.createElement('div');
                     divVideo.className = "fabkit-Thumbnail-root fabkit-Thumbnail--16/9 fabkit-scale--radius-2 FJXTLkFZ";
+                    divVideo.id = "fabext-VideoPlayer";
                     divVideo.style.position = "relative";
                     liVdeo.appendChild(divVideo);
 
@@ -145,9 +170,22 @@ function searchForVideo() {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        carouselBig = carouselDiv.children[0];
-                        while (carouselBig.firstChild) {
-                            carouselBig.removeChild(carouselBig.firstChild);
+                        carouselBig = carouselDiv.querySelector(".fabkit-Stack-root.fabkit-scale--gapX-layout-6.fabkit-scale--gapY-layout-6.fabkit-Stack--column > div");
+                        if (!carouselBig) return;
+                        let OldVideo = carouselBig.querySelector('iframe');
+                        if (OldVideo) {
+                            carouselBig.removeChild(OldVideo);
+                        }
+                        let Img = carouselBig.querySelector('img');
+                        if (Img) {
+                            Img.style.display = "none";
+                        }
+                        if (currentCarouselButton) {
+                            if (currentCarouselButton != divVideo && currentCarouselButton.id == "fabext-VideoPlayer") {
+                                currentCarouselButton.classList.remove("iioVBYdA");
+                            } else {
+                                currentCarouselButton.parentElement.classList.remove("iioVBYdA");
+                            }
                         }
 
                         var video = document.createElement('iframe');
@@ -160,6 +198,9 @@ function searchForVideo() {
                         video.referrerpolicy = "strict-origin-when-cross-origin";
                         video.allowFullscreen = true;
                         carouselBig.appendChild(video);
+
+                        currentCarouselButton = divVideo;
+                        divVideo.classList.add("iioVBYdA");
                     };
                     divVideo.appendChild(divBlock);
 

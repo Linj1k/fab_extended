@@ -140,6 +140,8 @@ function createFavoritePopup() {
 }
 
 function addFavoriteButtonToNavbar() {
+    if (getSetting("Favorites_State",true) == false) return;
+
     if (document.getElementById('favorite-button') === null) {
         var actions = document.querySelector('.fabkit-MegaMenu-actions');
         if (actions) {
@@ -198,13 +200,15 @@ function addFavoriteButtonToNavbar() {
 }
 
 function addFavoriteButtonProduct() {
+    if (getSetting("Favorites_State",true) == false) return;
+
     if (document.getElementById('product-heartButton') === null) {
         var productTitle = document.querySelector('.fabkit-Stack-root.fabkit-Stack--align_start.fabkit-scale--gapX-layout-6.fabkit-scale--gapY-layout-6.fabkit-Stack--column > .fabkit-Typography-root.fabkit-Typography--align-start.fabkit-Typography--intent-primary.fabkit-Heading--lg');
         if (productTitle) {
             var currentDiv = productTitle.parentNode;
             
             var heartButton = document.createElement("button");
-            heartButton.innerHTML = fabext_getIcon('heart', 'xs');
+            // heartButton.innerHTML = fabext_getIcon('heart', 'md');
             heartButton.id = "product-heartButton";
             heartButton.classList.add("fabkit-Button-root", "fabkit-Button--icon", "fabkit-Button--sm", "fabkit-Button--ghost", "fabkit-MegaMenu-iconButton");
             heartButton.type = "button";
@@ -227,6 +231,12 @@ function addFavoriteButtonProduct() {
             heartButton.dataset.category = category;
             heartButton.dataset.title = document.title.replace(" | Fab", "");
             heartButton.dataset.image = document.getElementsByClassName("fabkit-Thumbnail-root fabkit-Thumbnail--16/9 fabkit-scale--radius-4")[0].children[0].src;
+
+            // span
+            var span = document.createElement("span");
+            span.classList.add("fabkit-Button-label");
+            span.innerHTML = fabext_getIcon('heart','md');
+            heartButton.appendChild(span);
 
             // Add event listener to the heartButton to add or remove favorite
             heartButton.addEventListener('click', function(e) {
@@ -259,23 +269,16 @@ function addFavoriteButtonProduct() {
 }
 
 function addFavoriteButtonThumbnail(thumbnail) {
+    if (getSetting("Favorites_State",true) == false) return;
+
     if (thumbnail && thumbnail.querySelector('#thumbnail-heartButton') === null) {
         var parent = thumbnail.parentElement;
         var currentUrl = parent.querySelector('.fabkit-Thumbnail-overlay');
         if (!currentUrl) return;
         currentUrl = currentUrl.href;
 
-        const categoryElement = parent.parentElement.querySelector('.fabkit-Typography-root.fabkit-Typography--align-start.fabkit-Typography--intent-secondary.fabkit-Text--md.fabkit-Text--regular.fabkit-Stack-root.fabkit-Stack--align_center.fabkit-scale--gapX-spacing-2.fabkit-scale--gapY-spacing-2');
+        const categoryElement = parent.parentElement.querySelector('.fabkit-Thumbnail-item.fabkit-Thumbnail--bottom-left > .fabkit-Badge-root.fabkit-Badge--filled.fabkit-Badge--gray.fabkit-Badge--md.fabkit-Badge--blurify > .fabkit-Badge-label');
         if (!categoryElement) return;
-        
-        var contentDiv = document.createElement("div");
-        contentDiv.classList.add("fabkit-Stack-root", "fabkit-Stack--align_center", "fabkit-scale--gapX-spacing-2", "fabkit-scale--gapY-spacing-2");
-        contentDiv.id = "thumbnail-heartButton";
-        contentDiv.style.display = "flex";
-        contentDiv.style.justifyContent = "end";
-
-        var iconDiv = document.createElement("div");
-        iconDiv.classList.add("fabkit-Badge-root", "fabkit-Badge--filled", "fabkit-Badge--gray", "fabkit-Badge--md", "fabkit-Badge--iconOnly", "fabkit-Badge--blurify", "Nj5DrLsA", "jfHwYlH0", "MoIH083o");
 
         var heartButton = document.createElement("button");
         var topRight = thumbnail.querySelector('.fabkit-Thumbnail-item.fabkit-Thumbnail--top-right')
@@ -283,15 +286,14 @@ function addFavoriteButtonThumbnail(thumbnail) {
         // Create topRight div if it doesn't exist
         if (topRight === null) {
             var topRight = document.createElement("div");
-            topRight.classList.add("fabkit-Thumbnail-item", "fabkit-Thumbnail--top-right",  "q2jjQjlm", "YFuShsDk");
+            topRight.classList.add("fabkit-Thumbnail-item", "fabkit-Thumbnail--top-right", "Cla8eRIg", "N2MpToNm");
             thumbnail.appendChild(topRight);
-        } else {
-            contentDiv.classList.add("fabkit-Thumbnail-heartButton")
         }
 
-        heartButton.style.display = "flex";
+        heartButton.classList.add("fabkit-Button-root", "fabkit-Button--icon", "fabkit-Button--rounded", "fabkit-Button--sm", "fabkit-Button--blurry");
+        heartButton.id = "thumbnail-heartButton";
         heartButton.type = "button";
-        heartButton.innerHTML = fabext_getIcon('heart', 'xs');
+        heartButton.style.marginLeft = "5px";
         heartButton.setAttribute("aria-label", "Add to favorite");
         heartButton.title = "Add to favorite";
 
@@ -300,6 +302,10 @@ function addFavoriteButtonThumbnail(thumbnail) {
         heartButton.dataset.category = heartButton.dataset.category.split('\n').pop();
         heartButton.dataset.title = parent.parentElement.querySelector('.fabkit-Typography-ellipsisWrapper').innerText;
         heartButton.dataset.image = parent.querySelector('img').src;
+
+        var span = document.createElement("span");
+        span.classList.add("fabkit-Button-label");
+        span.innerHTML = fabext_getIcon('heart','sm');
 
 
         // Add event listener to the heartButton to add or remove favorite
@@ -316,8 +322,7 @@ function addFavoriteButtonThumbnail(thumbnail) {
         updateHeartButton(heartButton, currentUrl)
 
 
-        iconDiv.appendChild(heartButton);
-        contentDiv.appendChild(iconDiv);
-        topRight.appendChild(contentDiv);
+        heartButton.appendChild(span);
+        topRight.appendChild(heartButton);
     }
 }
