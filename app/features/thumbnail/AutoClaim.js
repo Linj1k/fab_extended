@@ -41,7 +41,7 @@ function AutoClaim_Button(e) {
         if (productPrice === null) return;
         const productPriceText = productPrice.textContent;
         if (productPriceText.includes(",") || productPriceText.includes(".")) return;
-        var link = thumbnail.querySelector('a.fabkit-Thumbnail-overlay');
+        var link = thumbnail.parentElement.querySelector('a[href^="/listings/"]');
         if (link === null) return;
         link = link.href;
 
