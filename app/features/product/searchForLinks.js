@@ -42,6 +42,10 @@ function searchForLinks() {
                     text = fabext_getIcon('artstation', 'xs') + link.innerHTML;
                 } else if(href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?github\.com/)) {
                     text = fabext_getIcon('github', 'xs') + link.innerHTML;
+                } else if(href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?google\.com/)) {
+                    text = fabext_getIcon('google', 'xs') + link.innerHTML;
+                } else if(href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?dropbox\.com/)) {
+                    text = fabext_getIcon('dropbox', 'xs') + link.innerHTML;
                 } else if (href.startsWith('https://skfb.ly') || href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?sketchfab\.com/)) {
                     text = fabext_getIcon('sketchfab', 'xs') + link.innerHTML;
                 } else if(href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?itch\.io/)) {

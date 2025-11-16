@@ -1,124 +1,142 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="../bootstrap-5.3.3-dist/css/bootstrap.min.css">
-    <script src="../bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Tailwind CSS Local -->
+    <script src="../tailwind.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../popup.css">
     <link rel="stylesheet" href="../fontawesome-free-6.7.1-web/css/all.min.css">
     <title>Settings - Fab Extended</title>
 </head>
-<body class="w-100">
-    <div class="d-flex mb-2 align-items-center justify-content-between">
+<body class="w-full min-h-screen">
+    <div class="flex items-center justify-between mb-6">
         <div>
-            <h1>Fab Extended<span class="text-muted fs-8" id="version">1.0.0</span></h1>
-            <h4 class="mb-0 d-flex align-items-center">Settings <button class="btn btn-primary ms-2" id="reset">Reset</button></h4>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Fab Extended 
+                <span class="text-gray-500 text-sm" id="version">1.0.0</span>
+            </h1>
+            <div class="flex items-center gap-3 mt-2">
+                <h4 class="text-xl font-semibold text-white">Settings</h4>
+                <button class="btn-primary" id="reset">
+                    <i class="fa-solid fa-rotate-right mr-2"></i>Reset
+                </button>
+            </div>
         </div>
-        <div class="d-flex">
-            <a href="https://www.fab.com/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary ms-1 text-white">Fab.com</a>
-            <a href="https://github.com/Linj1k/fab_extended" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary ms-1 text-white"><i class="fa-brands fa-github"></i> Github</a>
+        <div class="flex gap-2">
+            <a href="https://www.fab.com/" target="_blank" rel="noopener noreferrer" class="btn-outline">
+                Fab.com
+            </a>
+            <a href="https://github.com/Linj1k/fab_extended" target="_blank" rel="noopener noreferrer" class="btn-outline">
+                <i class="fa-brands fa-github mr-2"></i>Github
+            </a>
         </div>
     </div>
-    <hr>
-    <div class="accordion" id="accordionSettings">
+    <div class="h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent mb-6"></div>
+    <div class="space-y-4" id="accordionSettings">
+        <!-- Home Page Section -->
         <div class="accordion-item">
-            <h2 class="accordion-header" id="headingHomePageProfile">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHomePageProfile" aria-expanded="false" aria-controls="collapseHomePageProfile">
+            <button class="accordion-button" type="button" data-accordion-target="collapseHomePageProfile">
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-home text-purple-400"></i>
                     Home Page
-                </button>
-            </h2>
-            <div id="collapseHomePageProfile" class="accordion-collapse collapse show" aria-labelledby="headingHomePageProfile">
-                <div class="accordion-body">
-                    <div class="form-check">
-                        <label for="Index_CoverBackground">
+                </span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div id="collapseHomePageProfile" class="accordion-body">
+                <div class="space-y-4">
+                    <div class="setting-group">
+                        <label for="Index_CoverBackground" class="setting-label">
                             Cover Background
                         </label>
-                        <p class="text-muted fs-8 mb-0">Add the carousel image in the background, fading in to give a modern look.</p>
+                        <p class="text-gray-400 text-xs mb-2">Add the carousel image in the background, fading in to give a modern look.</p>
                         <input class="form-check" data-setting="true" type="checkbox" id="Index_CoverBackground" checked>
                     </div>
-                    <hr>
-                    <div class="form-check">
-                        <label for="Favorites_State">
+                    <div class="h-px bg-gray-700/50"></div>
+                    <div class="setting-group">
+                        <label for="Favorites_State" class="setting-label">
                             Enable/Disable Favorites
                         </label>
-                        <p class="text-muted fs-8 mb-0">Fab to add its own wishlisht system, Add a custom favorites system</p>
+                        <p class="text-gray-400 text-xs mb-2">Fab to add its own wishlisht system, Add a custom favorites system</p>
                         <input class="form-check" data-setting="true" type="checkbox" id="Favorites_State" checked>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Product Section -->
         <div class="accordion-item">
-            <h2 class="accordion-header" id="headingProduct">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProduct" aria-expanded="false" aria-controls="collapseProduct">
+            <button class="accordion-button" type="button" data-accordion-target="collapseProduct">
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-box text-purple-400"></i>
                     Product
-                </button>
-            </h2>
-            <div id="collapseProduct" class="accordion-collapse collapse show" aria-labelledby="headingProduct">
-                <div class="accordion-body">
-                    <div class="form-check">
-                        <label for="Product_AutoSelectLicense">
+                </span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div id="collapseProduct" class="accordion-body">
+                <div class="space-y-4">
+                    <div class="setting-group">
+                        <label for="Product_AutoSelectLicense" class="setting-label">
                             Auto Select License
                         </label>
-                        <p class="text-muted fs-8 mb-0">Automatically selects the selected license, if this is not possible, the first license will be selected</p>
+                        <p class="text-gray-400 text-xs mb-2">Automatically selects the selected license, if this is not possible, the first license will be selected</p>
                         <select class="form-select" data-setting="true" id="Product_AutoSelectLicense">
                             <option value="off">Disable</option>
                             <option value="personal" selected>Personnal</option>
                             <option value="professional">Professional</option>
                         </select>
                     </div>
-                    <hr>
-                    <div class="form-check">
-                        <label for="Product_DescriptionLogoLink">
+                    <div class="h-px bg-gray-700/50"></div>
+                    <div class="setting-group">
+                        <label for="Product_DescriptionLogoLink" class="setting-label">
                             Logo of well-known sites in a product description
                         </label>
                         <input class="form-check" data-setting="true" type="checkbox" value="" id="Product_DescriptionLogoLink" checked>
                     </div>
-                    <hr>
-                    <div class="form-check">
-                        <label for="Product_VideoPlayer">
+                    <div class="h-px bg-gray-700/50"></div>
+                    <div class="setting-group">
+                        <label for="Product_VideoPlayer" class="setting-label">
                             Video Player
                         </label>
-                        <p class="text-muted fs-8 mb-0">Get videos from a product description to display directly in the carousel with other images</p>
+                        <p class="text-gray-400 text-xs mb-2">Get videos from a product description to display directly in the carousel with other images</p>
                         <input class="form-check" data-setting="true" type="checkbox" id="Product_VideoPlayer" checked>
                     </div>
-                    <div class="form-check">
-                        <label for="Product_VideoPlayer_Order">
+                    <div class="setting-group">
+                        <label for="Product_VideoPlayer_Order" class="setting-label">
                             Order
                         </label>
-                        <p class="text-muted fs-8 mb-0">Choose the order in which videos are added to the carousel</p>
+                        <p class="text-gray-400 text-xs mb-2">Choose the order in which videos are added to the carousel</p>
                         <select class="form-select" data-setting="true" id="Product_VideoPlayer_Order">
                             <option value="first" selected>First</option>
                             <option value="last">In Last</option>
                         </select>
                     </div>
-                    <div class="form-check">
-                        <label for="Product_MaxVideos">
+                    <div class="setting-group">
+                        <label for="Product_MaxVideos" class="setting-label">
                             Max Videos
                         </label>
-                        <p class="text-muted fs-8 mb-0">Maximum number of videos displayed (0 = infinite)</p>
+                        <p class="text-gray-400 text-xs mb-2">Maximum number of videos displayed (0 = infinite)</p>
                         <input class="form-control" data-setting="true" type="number" id="Product_MaxVideos" value="0" min="0">
                     </div>
-                    <hr>
-                    <!-- <div class="form-check">
-                        <label for="Product_TechnicalDetails">
+                    <div class="h-px bg-gray-700/50"></div>
+                    <!-- <div class="setting-group">
+                        <label for="Product_TechnicalDetails" class="setting-label">
                             Technical Details
                         </label>
-                        <p class="text-muted fs-8 mb-0">Bring back Technical Details on file format</p>
+                        <p class="text-gray-400 text-xs mb-2">Bring back Technical Details on file format</p>
                         <input class="form-check" data-setting="true" type="checkbox" id="Product_TechnicalDetails" checked>
                     </div>
-                    <hr> -->
-                    <div class="form-check">
-                        <label for="Product_SellerDetails">
+                    <div class="h-px bg-gray-700/50"></div> -->
+                    <div class="setting-group">
+                        <label for="Product_SellerDetails" class="setting-label">
                             Seller Details
                         </label>
-                        <p class="text-muted fs-8 mb-0">Add seller information directly to product details (e.g. support email)</p>
-                        <input class="form-input" data-setting="true" type="checkbox" id="Product_SellerDetails" checked>
+                        <p class="text-gray-400 text-xs mb-2">Add seller information directly to product details (e.g. support email)</p>
+                        <input class="form-check" data-setting="true" type="checkbox" id="Product_SellerDetails" checked>
                     </div>
-                    <hr>
-                    <div class="form-check">
-                        <label for="Product_CoverBackground">
+                    <div class="h-px bg-gray-700/50"></div>
+                    <div class="setting-group">
+                        <label for="Product_CoverBackground" class="setting-label">
                             Cover Background
                         </label>
-                        <p class="text-muted fs-8 mb-0">Add the first image of the product or the image of the salesperson in the background, fading to give it a modern look.</p>
+                        <p class="text-gray-400 text-xs mb-2">Add the first image of the product or the image of the salesperson in the background, fading to give it a modern look.</p>
                         <select class="form-select" data-setting="true" id="Product_CoverBackground">
                             <option value="off">Disable</option>
                             <option value="product" selected>Product Image</option>
@@ -128,27 +146,30 @@
                 </div>
             </div>
         </div>
+        <!-- Thumbnails Section -->
         <div class="accordion-item">
-            <h2 class="accordion-header" id="headingThumbnails">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThumbnails" aria-expanded="false" aria-controls="collapseThumbnails">
+            <button class="accordion-button" type="button" data-accordion-target="collapseThumbnails">
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-image text-purple-400"></i>
                     Thumbnails
-                </button>
-            </h2>
-            <div id="collapseThumbnails" class="accordion-collapse collapse show" aria-labelledby="headingThumbnails">
-                <div class="accordion-body">
-                    <div class="form-check">
-                        <label for="Thumbnail_AddToCart">
+                </span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div id="collapseThumbnails" class="accordion-body">
+                <div class="space-y-4">
+                    <div class="setting-group">
+                        <label for="Thumbnail_AddToCart" class="setting-label">
                             Add to cart
                         </label>
-                        <p class="text-muted fs-8 mb-0">Add a shopping cart icon to thumbnails</p>
+                        <p class="text-gray-400 text-xs mb-2">Add a shopping cart icon to thumbnails</p>
                         <input class="form-check" data-setting="true" type="checkbox" id="Thumbnail_AddToCart" checked>
                     </div>
-                    <hr>
-                    <div class="form-check">
-                        <label for="Thumbnail_AutoClaimFree">
+                    <div class="h-px bg-gray-700/50"></div>
+                    <div class="setting-group">
+                        <label for="Thumbnail_AutoClaimFree" class="setting-label">
                             Auto Claim Free
                         </label>
-                        <p class="text-muted fs-8 mb-0">Add AutoClaim button, Automatically adds or claims free products currently displayed on the page</p>
+                        <p class="text-gray-400 text-xs mb-2">Add AutoClaim button, Automatically adds or claims free products currently displayed on the page</p>
                         <select class="form-select" data-setting="true" id="Thumbnail_AutoClaimFree">
                             <option value="off">Disable</option>
                             <option value="cart" selected>Add To Cart</option>
@@ -158,31 +179,39 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Seller Profile Section -->
         <div class="accordion-item">
-            <h2 class="accordion-header" id="headingSellerProfile">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSellerProfile" aria-expanded="false" aria-controls="collapseSellerProfile">
+            <button class="accordion-button" type="button" data-accordion-target="collapseSellerProfile">
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-user text-purple-400"></i>
                     Seller Profile
-                </button>
-            </h2>
-            <div id="collapseSellerProfile" class="accordion-collapse collapse show" aria-labelledby="headingSellerProfile">
-                <div class="accordion-body">
-                    <div class="form-check">
-                        <label for="Seller_CoverBackground">
+                </span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div id="collapseSellerProfile" class="accordion-body">
+                <div class="space-y-4">
+                    <div class="setting-group">
+                        <label for="Seller_CoverBackground" class="setting-label">
                             Cover Background
                         </label>
-                        <p class="text-muted fs-8 mb-0">Add the seller's image in the background, fading in to give a modern look.</p>
+                        <p class="text-gray-400 text-xs mb-2">Add the seller's image in the background, fading in to give a modern look.</p>
                         <input class="form-check" data-setting="true" type="checkbox" id="Seller_CoverBackground" checked>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <hr>
-    <footer class="text-center text-muted fs-8 mt-3">
-        <p class="mb-0">Developed by <a href="https://github.com/Linj1k" target="_blank" rel="noopener noreferrer">Enzo Lefevres</a></p>
-        <p class="mb-0">Fab Extended is not affiliated with fab.com</p>
+    
+    <div class="h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent my-8"></div>
+    
+    <footer class="text-center text-gray-500 text-xs py-6">
+        <p class="mb-2">Developed by <a href="https://github.com/Linj1k" target="_blank" rel="noopener noreferrer" class="text-purple-400 hover:text-purple-300 transition-colors">Enzo Lefevres</a></p>
+        <p class="mb-2">Fab Extended is not affiliated with fab.com</p>
         <p class="mb-0">Fab and the Fab logo are trademarks or registered trademarks of Epic Games, Inc. in the USA and elsewhere. All other trademarks are the property of their respective owners.</p>
     </footer>
+    
+    <script src="accordion.js"></script>
     <script src="../popup.js"></script>
     <script src="settings.js"></script>
 </body>

@@ -1,70 +1,427 @@
 body {
     width: 400px;
     margin: 0;
-    padding: 10px;
+    padding: 16px;
     padding-bottom: 0;
-    font-family: Arial, sans-serif;
-    background-color: #1d1c21!important;
-    color: white!important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f0e13;
+    color: white;
 }
 
-#favorites-list{
+#favorites-list {
     list-style-type: none;
-    padding: 0;
+    padding: 0.5rem;
     margin: 0;
 }
 
-.card {
-    color: white!important;
-    background-color: #2b2c2e!important;
+/* Custom scrollbar */
+#favorites-list::-webkit-scrollbar {
+    width: 6px;
 }
-.card:hover {
-    background-color: #3e3f40!important;
+
+#favorites-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
 }
-.text-muted {
-    color: #878a8d!important;
+
+#favorites-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+    border-radius: 10px;
 }
-.fs-7 {
-    font-size: 0.9rem!important;
+
+#favorites-list::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #9333ea 0%, #db2777 100%);
 }
-.fs-8 {
-    font-size: 0.875rem!important;
+
+/* Card styles */
+.favorite-card {
+    display: block;
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    backdrop-filter: blur(10px);
+    border: 2px solid #374151;
+    border-radius: 0.75rem;
+    padding: 0.625rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
 }
-.fs-9 {
-    font-size: 0.6rem!important;
+
+.favorite-card .favorite-image {
+    width: 5rem !important;
+    height: 5rem !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(55, 65, 81, 0.5);
 }
+
+.favorite-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.05), rgba(236, 72, 153, 0.05));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.favorite-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.favorite-card:hover {
+    border-color: #a855f7;
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 20px 25px -5px rgba(168, 85, 247, 0.2), 0 10px 10px -5px rgba(168, 85, 247, 0.15);
+}
+
+.favorite-card[draggable="true"] {
+    cursor: grab;
+}
+
+.favorite-card[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+.favorite-card:hover::before {
+    opacity: 1;
+}
+
+/* Search bar container */
+.relative {
+    position: relative;
+}
+
+.relative .fa-search {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 0.8rem;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Search bar */
 .search-bar {
-    color: white!important;
-    background-color: #2b2c2e!important;
+    width: 100%;
+    padding: 0.5rem 1rem 0.5rem 1.8rem!important;
+    background-color: #111827;
+    border: 2px solid #374151;
+    border-radius: 0.75rem;
+    color: white;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
+
 .search-bar::placeholder {
-    color: #878a8d!important;
+    color: #6b7280;
 }
+
 .search-bar:focus {
-    background-color: #3e3f40!important;
+    outline: none;
+    border-color: #a855f7;
+    background-color: #1f2937;
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.icon svg{
-    fill: rgb(212, 212, 212);
-}
-.icon:hover svg{
-    fill: white;
+.search-bar:focus + .fa-search,
+.search-bar:focus ~ .fa-search {
+    color: #a855f7;
 }
 
-.remove-icon{
-    color: rgb(220,53,69);
+/* Button icon */
+.btn-icon {
+    @apply w-10 h-10 flex items-center justify-center bg-gray-800 border-2 border-gray-700 rounded-lg hover:border-purple-500 hover:bg-gradient-to-br hover:from-purple-500/20 hover:to-pink-500/20 transition-all duration-300 shadow-md;
+}
+
+/* Remove icon */
+.remove-icon {
+    color: #f87171;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 1rem;
 }
 
 .remove-icon:hover {
-    color: rgb(168, 41, 53);
+    color: #ef4444;
+}
+
+/* Accordion styles */
+.accordion-item {
+    @apply bg-gray-900 border-2 border-gray-700 rounded-xl mb-4 overflow-hidden shadow-lg;
 }
 
 .accordion-button {
-    color: white!important;
-    background-color: #2b2c2e!important;
-    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(to right, #1f2937, #111827);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid #374151;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
 }
 
-.accordion-button:focus, .accordion-button:hover, .accordion-button:not(.collapsed) {
-    background-color: #3e3f40!important;
+.accordion-button:hover {
+    background: linear-gradient(to right, #374151, #1f2937);
+}
+
+.accordion-button .fa-chevron-down {
+    transition: transform 0.3s ease;
+    color: #a855f7;
+    flex-shrink: 0;
+    font-size: 0.875rem;
+}
+
+.accordion-body {
+    @apply px-5 bg-gray-900;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    border-top: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+.accordion-body.accordion-open {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+/* Form elements */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+select,
+textarea,
+.form-control {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    background-color: #1f2937;
+    border: 2px solid #374151;
+    border-radius: 0.5rem;
+    color: white;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus,
+textarea:focus,
+.form-control:focus {
+    outline: none;
+    border-color: #a855f7;
+    background-color: #374151;
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+input[type="checkbox"],
+.form-check[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #a855f7;
+    cursor: pointer;
+    border-radius: 0.25rem;
+}
+
+select,
+.form-select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23a855f7' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding: 0.5rem 2.5rem 0.5rem 1rem !important;
+    appearance: none;
+}
+
+select option,
+.form-select option {
+    background-color: #1f2937;
+    color: white;
+    padding: 0.5rem;
+}
+
+/* Buttons */
+.btn-primary {
+    @apply px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-purple-500/50 border-2 border-purple-400;
+}
+
+.btn-outline {
+    @apply px-4 py-2 bg-gray-800 border-2 border-gray-700 hover:border-purple-500 hover:bg-gradient-to-r hover:from-purple-500/10 hover:to-pink-500/10 text-white rounded-lg transition-all duration-300 shadow-md;
+}
+
+/* Setting groups */
+.setting-group {
+    padding: 0.75rem;
+    background-color: rgba(31, 41, 55, 0.5);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(55, 65, 81, 0.3);
+}
+
+.setting-group > * + * {
+    margin-top: 0.5rem;
+}
+
+.setting-label {
+    display: block;
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Dividers with gradient effect */
+.h-px.bg-gray-700\/50 {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent) !important;
+    margin: 1rem 0;
+}
+
+/* Custom background override for settings pages */
+body.w-full {
+    width: 100% !important;
+}
+
+/* ========== FOLDER STYLES ========== */
+
+/* Folder section container */
+.favorite-folder-section {
+    margin-bottom: 1.5rem;
+}
+
+/* Folder header */
+.favorite-folder-header {
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0.5rem;
+    border-left: 4px solid #a855f7;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 600;
+    font-size: 0.875rem;
+    user-select: none;
+}
+
+.favorite-folder-header:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(2px);
+}
+
+/* Folder content container */
+.favorite-folder-content {
+    padding-left: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+/* Popup folder styles */
+#favorite-popup .favorite-folder-section {
+    margin-bottom: 1rem;
+}
+
+#favorite-popup .favorite-folder-header {
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 0.375rem;
+    border-left: 3px solid #a855f7;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 600;
+    font-size: 0.75rem;
+    user-select: none;
+}
+
+#favorite-popup .favorite-folder-header:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+#favorite-popup .favorite-folder-content {
+    padding-left: 0.25rem;
+}
+
+/* Folder management modal styles */
+#folder-management-modal,
+#create-folder-modal,
+#folder-selection-modal {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Context menu styles */
+#folder-context-menu {
+    animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Folder list styles for full page */
+.folder-favorites-list {
+    margin-bottom: 1rem;
+}
+
+/* Color input styling for better appearance */
+input[type="color"] {
+    background-color: #2a2a2a;
+    cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 2px;
+    border-radius: 8px;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 6px;
+}
+
+/* Add folder button spacing */
+#add-folder-btn {
+    white-space: nowrap;
+}
+
+/* Chevron animation for accordion */
+.folder-chevron {
+    transition: transform 0.3s ease;
+    display: inline-block;
+    margin-right: 4px;
+}
+
+/* Smooth accordion animation */
+.folder-favorites-list {
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    overflow: hidden;
+    padding: 0 8px;
+}
+
+.favorite-folder-content {
+    transition: max-height 0.3s ease-out;
+    overflow: hidden;
 }

@@ -5,8 +5,18 @@ var GithubManifest;
 var FabAPIUrl = 'https://www.fab.com/i/';
 var FabData;
 
-function fabext_getIcon(icon, size="md") {
-    return `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--${size} edsicon edsicon-${icon}" aria-hidden="true"></i>`;
+function fabext_getIcon(icon, size="md", customClass="") {
+    return `<i class="fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--${size} edsicon edsicon-${icon} ${customClass}" aria-hidden="true"></i>`;
+}
+
+function fabext_getIconHtml(icon, size="md", customClass="") {
+    let iconHtml = document.createElement('i');
+    iconHtml.className = `fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--${size} edsicon edsicon-${icon} ${customClass}`;
+    return iconHtml;
+    if (iconHtml) {
+        return iconHtml;
+    }
+    return '';
 }
 
 function getEmbededVideoId(href) {

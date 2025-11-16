@@ -8,6 +8,6 @@ function addElementsThumbnail() {
         if (!parent.querySelector('.fabkit-Stack-root.fabkit-Stack--align_center.fabkit-scale--gapX-spacing-2.fabkit-scale--gapY-spacing-2')) return;
 
         addFavoriteButtonThumbnail(thumbnail)
-        addToCartThumbnail(thumbnail)
+        //addToCartThumbnail(thumbnail)
     });
 }
