@@ -1,4 +1,17 @@
 let currentCarouselButton = null;
+
+function clickCookieGuardButtons() {
+    // Find and click all cookie guard buttons
+    const cookieButtons = document.querySelectorAll('.epic-cookie-guard-iframe-button');
+    cookieButtons.forEach(function(button) {
+        if (button && !button.dataset.fabextClicked) {
+            button.dataset.fabextClicked = 'true';
+            button.click();
+            console.log('[Fab Extended] Clicked cookie guard button');
+        }
+    });
+}
+
 function searchForVideo() {
     if (getSetting("Product_VideoPlayer",true) === false) return;
 
@@ -24,7 +37,7 @@ function searchForVideo() {
             if (img) {
                 var li = document.createElement('li');
                 var div = document.createElement('div');
-                div.className = "fabkit-Thumbnail-root fabkit-Thumbnail--16/9 fabkit-scale--radius-2 FJXTLkFZ";
+                div.className = "fabkit-Thumbnail-root fabkit-Thumbnail--16/9 fabkit-scale--radius-2 dhHtWWJe Mh8pZDsr";
                 div.style.position = "relative";
                 li.appendChild(div);
                 var imgCopy = img.cloneNode(true);
@@ -104,7 +117,7 @@ function searchForVideo() {
                     var liVdeo = document.createElement('li');
 
                     var divVideo = document.createElement('div');
-                    divVideo.className = "fabkit-Thumbnail-root fabkit-Thumbnail--16/9 fabkit-scale--radius-2 FJXTLkFZ";
+                    divVideo.className = "fabkit-Thumbnail-root fabkit-Thumbnail--16/9 fabkit-scale--radius-2 dhHtWWJe Mh8pZDsr";
                     divVideo.id = "fabext-VideoPlayer";
                     divVideo.style.position = "relative";
                     liVdeo.appendChild(divVideo);
@@ -170,16 +183,18 @@ function searchForVideo() {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        carouselBig = carouselDiv.querySelector(".fabkit-Stack-root.fabkit-scale--gapX-layout-6.fabkit-scale--gapY-layout-6.fabkit-Stack--column > div");
+                        carouselBig = carouselDiv.querySelector(".fabkit-Stack-root.fabkit-scale--gapX-layout-6.fabkit-scale--gapY-layout-6.fabkit-Stack--column > div > div > div");
                         if (!carouselBig) return;
                         let OldVideo = carouselBig.querySelector('iframe');
                         if (OldVideo) {
                             carouselBig.removeChild(OldVideo);
                         }
-                        let Img = carouselBig.querySelector('img');
-                        if (Img) {
-                            Img.style.display = "none";
-                        }
+
+                        // let Img = carouselBig.querySelector('img');
+                        // if (Img) {
+                        //     Img.style.display = "none";
+                        // }
+                        
                         if (currentCarouselButton) {
                             if (currentCarouselButton != divVideo && currentCarouselButton.id == "fabext-VideoPlayer") {
                                 currentCarouselButton.classList.remove("iioVBYdA");
@@ -191,16 +206,21 @@ function searchForVideo() {
                         var video = document.createElement('iframe');
                         video.style.width = "100%";
                         video.style.height = "100%";
+                        video.style.objectFit = "cover";
+                        video.style.display = "block";
                         video.src = embed.link;
                         video.title = "Video player";
                         video.frameborder = "0";
                         video.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
                         video.referrerpolicy = "strict-origin-when-cross-origin";
                         video.allowFullscreen = true;
-                        carouselBig.appendChild(video);
+                        carouselBig.insertBefore(video, carouselBig.firstChild);
 
                         currentCarouselButton = divVideo;
                         divVideo.classList.add("iioVBYdA");
+                        
+                        // Click cookie guard buttons after iframe loads
+                        setTimeout(clickCookieGuardButtons, 1000);
                     };
                     divVideo.appendChild(divBlock);
 
@@ -220,5 +240,8 @@ function searchForVideo() {
             });
         }
         carouselDiv.dataset.searchForVideo = true;
+        
+        // Check for cookie guard buttons after videos are added
+        setTimeout(clickCookieGuardButtons, 500);
     }
 }
