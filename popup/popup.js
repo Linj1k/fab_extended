@@ -105,6 +105,135 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
 
+    // Helper function to create folder header with actions
+    function createFolderHeader(folderData, folderFavorites, isUncategorized = false) {
+        var folderHeader = document.createElement('div');
+        folderHeader.classList.add('favorite-folder-header');
+        
+        if (!isUncategorized) {
+            folderHeader.draggable = true;
+            folderHeader.dataset.folderId = folderData.id;
+            folderHeader.dataset.folderIndex = folderData.index;
+            folderHeader.classList.add('folder-header-draggable');
+        }
+        
+        folderHeader.style.cssText = `
+            margin-top: 20px;
+            margin-bottom: 12px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border-left: 4px solid ${folderData.color};
+            cursor: ${isUncategorized ? 'pointer' : 'move'};
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        `;
+        
+        // Folder info section
+        var folderInfo = document.createElement('div');
+        folderInfo.style.cssText = `
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        `;
+        
+        var folderIcon = isUncategorized 
+            ? '<i class="fa-regular fa-folder"></i>' 
+            : '<i class="fa-solid fa-grip-vertical" style="color: #666; cursor: move;"></i>';
+        
+        folderInfo.innerHTML = `
+            ${folderIcon}
+            <span style="color: ${folderData.color}; font-weight: 600; font-size: 14px; cursor: pointer;" class="folder-toggle">
+                <i class="fa-solid fa-chevron-right folder-chevron"></i>
+                <i class="fa-solid fa-folder"></i> ${folderData.name} (${folderFavorites.length})
+            </span>
+        `;
+        
+        // Folder actions (copy and delete buttons)
+        var folderActions = document.createElement('div');
+        folderActions.style.cssText = `
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        `;
+        
+        // Copy button
+        var copyBtn = document.createElement('button');
+        copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i>';
+        copyBtn.title = 'Copy all links';
+        copyBtn.style.cssText = `
+            padding: 6px 10px;
+            background: transparent;
+            color: #3b82f6;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        `;
+        copyBtn.addEventListener('mouseenter', function() {
+            this.style.background = 'rgba(59, 130, 246, 0.2)';
+        });
+        copyBtn.addEventListener('mouseleave', function() {
+            this.style.background = 'transparent';
+        });
+        copyBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var links = folderData.name + ":\n\n" + folderFavorites.map(fav => fav.url).join('\n');
+            
+            navigator.clipboard.writeText(links).then(function() {
+                var originalHTML = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                copyBtn.style.color = '#10b981';
+                setTimeout(function() {
+                    copyBtn.innerHTML = originalHTML;
+                    copyBtn.style.color = '#3b82f6';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Failed to copy links: ', err);
+                alert('Failed to copy links to clipboard');
+            });
+        });
+        folderActions.appendChild(copyBtn);
+        
+        // Delete button (only for non-uncategorized folders)
+        if (!isUncategorized) {
+            var deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            deleteBtn.title = 'Delete folder';
+            deleteBtn.style.cssText = `
+                padding: 6px 10px;
+                background: transparent;
+                color: #dc2626;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: all 0.2s;
+            `;
+            deleteBtn.addEventListener('mouseenter', function() {
+                this.style.background = 'rgba(220, 38, 38, 0.2)';
+            });
+            deleteBtn.addEventListener('mouseleave', function() {
+                this.style.background = 'transparent';
+            });
+            deleteBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (confirm('Delete folder "' + folderData.name + '"? Favorites will be moved to Uncategorized.')) {
+                    deleteFolder(folderData.id);
+                    setTimeout(() => location.reload(), 300);
+                }
+            });
+            folderActions.appendChild(deleteBtn);
+        }
+        
+        folderHeader.appendChild(folderInfo);
+        folderHeader.appendChild(folderActions);
+        
+        return { header: folderHeader, toggle: folderInfo.querySelector('.folder-toggle') };
+    }
+
     // Get the favorites from the storage
     chrome.storage.sync.get(['favorites', 'folders'], function(data) {
         // Get the favorites and folders from the storage
@@ -143,32 +272,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Display uncategorized favorites first
         if (uncategorizedFavorites.length > 0) {
-            var uncategorizedHeader = document.createElement('div');
-            uncategorizedHeader.classList.add('favorite-folder-header');
-            uncategorizedHeader.style.cssText = `
-                margin-top: 20px;
-                margin-bottom: 12px;
-                padding: 8px 16px;
-                background: rgba(255,255,255,0.05);
-                border-radius: 8px;
-                border-left: 4px solid #888;
-                cursor: pointer;
-                transition: all 0.2s;
-            `;
-            uncategorizedHeader.innerHTML = `
-                <span style="color: #888; font-weight: 600; font-size: 14px;">
-                    <i class="fa-solid fa-chevron-right folder-chevron"></i>
-                    <i class="fa-regular fa-folder"></i> Uncategorized (${uncategorizedFavorites.length})
-                </span>
-            `;
+            var uncategorizedData = {
+                name: 'Uncategorized',
+                color: '#888',
+                id: null
+            };
+            
+            var headerElements = createFolderHeader(uncategorizedData, uncategorizedFavorites, true);
+            var uncategorizedHeader = headerElements.header;
+            var uncategorizedToggle = headerElements.toggle;
 
             var uncategorizedList = document.createElement('div');
             uncategorizedList.style.marginBottom = '20px';
             uncategorizedList.style.display = 'none'; // Fermé par défaut
             uncategorizedList.classList.add('folder-favorites-list');
 
-            uncategorizedHeader.addEventListener('click', function() {
-                var chevron = this.querySelector('.folder-chevron');
+            uncategorizedToggle.addEventListener('click', function() {
+                var chevron = uncategorizedHeader.querySelector('.folder-chevron');
                 if (uncategorizedList.style.display === 'none') {
                     uncategorizedList.style.display = 'block';
                     chevron.classList.remove('fa-chevron-right');
@@ -225,78 +345,16 @@ document.addEventListener('DOMContentLoaded', function() {
         folders.forEach(function(folder, folderIndex) {
             if (!folder || !folder.id) return; // Skip null/invalid folders
             
-            var folderHeader = document.createElement('div');
-            folderHeader.draggable = true;
-            folderHeader.dataset.folderId = folder.id;
-            folderHeader.dataset.folderIndex = folderIndex;
-            folderHeader.classList.add('folder-header-draggable');
-            folderHeader.style.cssText = `
-                margin-top: 20px;
-                margin-bottom: 12px;
-                padding: 8px 16px;
-                background: rgba(255,255,255,0.05);
-                border-radius: 8px;
-                border-left: 4px solid ${folder.color};
-                cursor: move;
-                transition: all 0.2s;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            `;
+            var folderData = {
+                name: folder.name,
+                color: folder.color,
+                id: folder.id,
+                index: folderIndex
+            };
             
-            var folderInfo = document.createElement('div');
-            folderInfo.style.cssText = `
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                flex: 1;
-            `;
-            
-            folderInfo.innerHTML = `
-                <i class="fa-solid fa-grip-vertical" style="color: #666; cursor: move;"></i>
-                <span style="color: ${folder.color}; font-weight: 600; font-size: 14px; cursor: pointer;" class="folder-toggle">
-                    <i class="fa-solid fa-chevron-right folder-chevron"></i>
-                    <i class="fa-solid fa-folder"></i> ${folder.name} (${folderGroups[folder.id].favorites.length})
-                </span>
-            `;
-            
-            var folderActions = document.createElement('div');
-            folderActions.style.cssText = `
-                display: flex;
-                gap: 8px;
-                align-items: center;
-            `;
-            
-            // Delete button
-            var deleteBtn = document.createElement('button');
-            deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
-            deleteBtn.title = 'Delete folder';
-            deleteBtn.style.cssText = `
-                padding: 6px 10px;
-                background: transparent;
-                color: #dc2626;
-                border: none;
-                border-radius: 6px;
-                cursor: pointer;
-                transition: all 0.2s;
-            `;
-            deleteBtn.addEventListener('mouseenter', function() {
-                this.style.background = 'rgba(220, 38, 38, 0.2)';
-            });
-            deleteBtn.addEventListener('mouseleave', function() {
-                this.style.background = 'transparent';
-            });
-            deleteBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (confirm('Delete folder "' + folder.name + '"? Favorites will be moved to Uncategorized.')) {
-                    deleteFolder(folder.id);
-                    setTimeout(() => location.reload(), 300);
-                }
-            });
-            folderActions.appendChild(deleteBtn);
-            
-            folderHeader.appendChild(folderInfo);
-            folderHeader.appendChild(folderActions);
+            var headerElements = createFolderHeader(folderData, folderGroups[folder.id].favorites, false);
+            var folderHeader = headerElements.header;
+            var folderToggle = headerElements.toggle;
             
             // Drag and drop handlers for folders
             folderHeader.addEventListener('dragstart', function(e) {
@@ -374,7 +432,6 @@ document.addEventListener('DOMContentLoaded', function() {
             folderFavoritesList.classList.add('folder-favorites-list');
 
             // Toggle accordion on folder name click
-            var folderToggle = folderHeader.querySelector('.folder-toggle');
             folderToggle.addEventListener('click', function(e) {
                 e.stopPropagation();
                 var chevron = folderHeader.querySelector('.folder-chevron');

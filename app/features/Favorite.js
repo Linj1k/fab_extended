@@ -235,6 +235,100 @@ function createFavoritePopup() {
         }, 300);
     });
 
+    // Helper function to create folder section with header and actions
+    function createFolderSection(folderData, folderFavorites, folderIndex, isUncategorized = false) {
+        var sectionHeader = document.createElement("div");
+        sectionHeader.classList.add("favorite-folder-header");
+        sectionHeader.style.display = 'flex';
+        sectionHeader.style.alignItems = 'center';
+        sectionHeader.style.justifyContent = 'space-between';
+        
+        if (!isUncategorized) {
+            sectionHeader.draggable = true;
+            sectionHeader.dataset.folderId = folderData.id;
+            sectionHeader.dataset.folderIndex = folderIndex;
+            sectionHeader.style.borderLeftColor = folderData.color;
+            sectionHeader.style.cursor = 'move';
+        }
+        
+        var folderInfo = document.createElement('span');
+        folderInfo.style.cssText = isUncategorized 
+            ? 'opacity: 0.7; flex: 1; cursor: pointer;'
+            : 'display: flex; align-items: center; gap: 6px; flex: 1; cursor: pointer;';
+        folderInfo.classList.add(isUncategorized ? 'uncategorized-toggle' : 'folder-toggle-popup');
+        
+        var folderIcon = isUncategorized 
+            ? fabext_getIcon('folder',"md","folder-chevron")
+            : fabext_getIcon('square-grid-2x2',"xs")+' '+fabext_getIcon('folder',"md","folder-chevron");
+        
+        folderInfo.innerHTML = folderIcon + ' ' + folderData.name + ' (' + folderFavorites.length + ')';
+        folderInfo.style.color = folderData.color;
+        
+        var folderActions = document.createElement('div');
+        folderActions.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+        
+        // Copy button
+        var copyBtn = document.createElement('button');
+        copyBtn.innerHTML = fabext_getIcon('square-on-tilted-square', 'sm');
+        copyBtn.title = 'Copy all links';
+        copyBtn.style.cssText = 'padding: 6px 10px; background: transparent; color: #3b82f6; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;';
+        copyBtn.addEventListener('mouseenter', function() {
+            this.style.background = 'rgba(59, 130, 246, 0.2)';
+            this.style.transform = 'scale(1.1)';
+        });
+        copyBtn.addEventListener('mouseleave', function() {
+            this.style.background = 'transparent';
+            this.style.transform = 'scale(1)';
+        });
+        copyBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var links = folderData.name + ":\n\n" + folderFavorites.map(function(fav) { return fav.url; }).join('\n');
+            
+            navigator.clipboard.writeText(links).then(function() {
+                var originalHTML = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✓';
+                copyBtn.style.color = '#10b981';
+                setTimeout(function() {
+                    copyBtn.innerHTML = originalHTML;
+                    copyBtn.style.color = '#3b82f6';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Failed to copy links: ', err);
+                alert('Failed to copy links to clipboard');
+            });
+        });
+        folderActions.appendChild(copyBtn);
+        
+        // Delete button (only for non-uncategorized folders)
+        if (!isUncategorized) {
+            var deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = fabext_getIcon('trash', 'sm');
+            deleteBtn.title = 'Delete folder';
+            deleteBtn.style.cssText = 'padding: 6px 10px; background: transparent; color: #dc2626; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;';
+            deleteBtn.addEventListener('mouseenter', function() {
+                this.style.background = 'rgba(220, 38, 38, 0.2)';
+                this.style.transform = 'scale(1.1)';
+            });
+            deleteBtn.addEventListener('mouseleave', function() {
+                this.style.background = 'transparent';
+                this.style.transform = 'scale(1)';
+            });
+            deleteBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (confirm('Delete folder "' + folderData.name + '"? Favorites will be moved to Uncategorized.')) {
+                    deleteFolder(folderData.id);
+                    popup.load();
+                }
+            });
+            folderActions.appendChild(deleteBtn);
+        }
+        
+        sectionHeader.appendChild(folderInfo);
+        sectionHeader.appendChild(folderActions);
+        
+        return { header: sectionHeader, toggle: folderInfo };
+    }
+
     // Load function to load the favorites from localStorage
     popup.load = function() {
         contentDiv.innerHTML = "";
@@ -270,9 +364,16 @@ function createFavoritePopup() {
             var uncategorizedSection = document.createElement("div");
             uncategorizedSection.classList.add("favorite-folder-section");
             
-            var sectionHeader = document.createElement("div");
-            sectionHeader.classList.add("favorite-folder-header");
-            sectionHeader.innerHTML = '<span style="opacity: 0.7;">'+fabext_getIcon('folder',"md","folder-chevron")+' Uncategorized (' + uncategorizedFavorites.length + ')</span>';
+            var uncategorizedData = {
+                name: 'Uncategorized',
+                color: '#888',
+                id: null
+            };
+            
+            var headerElements = createFolderSection(uncategorizedData, uncategorizedFavorites, null, true);
+            var sectionHeader = headerElements.header;
+            var uncategorizedToggle = headerElements.toggle;
+            
             uncategorizedSection.appendChild(sectionHeader);
 
             var sectionContent = document.createElement("div");
@@ -281,8 +382,8 @@ function createFavoritePopup() {
             uncategorizedSection.appendChild(sectionContent);
 
             // Toggle accordion
-            sectionHeader.addEventListener('click', function() {
-                var chevron = this.querySelector('.folder-chevron');
+            uncategorizedToggle.addEventListener('click', function() {
+                var chevron = sectionHeader.querySelector('.folder-chevron');
                 if (sectionContent.style.display === 'none') {
                     sectionContent.style.display = 'block';
                     chevron.classList.remove('edsicon-folder');
@@ -340,45 +441,16 @@ function createFavoritePopup() {
             var folderSection = document.createElement("div");
             folderSection.classList.add("favorite-folder-section");
             
-            var sectionHeader = document.createElement("div");
-            sectionHeader.classList.add("favorite-folder-header");
-            sectionHeader.draggable = true;
-            sectionHeader.dataset.folderId = folder.id;
-            sectionHeader.dataset.folderIndex = folderIndex;
-            sectionHeader.style.borderLeftColor = folder.color;
-            sectionHeader.style.display = 'flex';
-            sectionHeader.style.alignItems = 'center';
-            sectionHeader.style.justifyContent = 'space-between';
-            sectionHeader.style.cursor = 'move';
+            var folderData = {
+                name: folder.name,
+                color: folder.color,
+                id: folder.id
+            };
             
-            var folderInfo = document.createElement('span');
-            folderInfo.style.cssText = 'display: flex; align-items: center; gap: 6px; flex: 1; cursor: pointer;';
-            folderInfo.classList.add('folder-toggle-popup');
-            folderInfo.innerHTML = fabext_getIcon('square-grid-2x2',"xs")+' '+fabext_getIcon('folder',"md","folder-chevron")+' ' + folder.name + ' (' + folderGroups[folder.id].favorites.length + ')';
-            folderInfo.style.color = folder.color;
+            var headerElements = createFolderSection(folderData, folderGroups[folder.id].favorites, folderIndex, false);
+            var sectionHeader = headerElements.header;
+            var folderToggle = headerElements.toggle;
             
-            var deleteBtn = document.createElement('button');
-            deleteBtn.innerHTML = fabext_getIcon('trash', 'sm');
-            deleteBtn.title = 'Delete folder';
-            deleteBtn.style.cssText = 'padding: 6px 10px; background: transparent; color: #dc2626; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;';
-            deleteBtn.addEventListener('mouseenter', function() {
-                this.style.background = 'rgba(220, 38, 38, 0.2)';
-                this.style.transform = 'scale(1.1)';
-            });
-            deleteBtn.addEventListener('mouseleave', function() {
-                this.style.background = 'transparent';
-                this.style.transform = 'scale(1)';
-            });
-            deleteBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (confirm('Delete folder "' + folder.name + '"? Favorites will be moved to Uncategorized.')) {
-                    deleteFolder(folder.id);
-                    popup.load();
-                }
-            });
-            
-            sectionHeader.appendChild(folderInfo);
-            sectionHeader.appendChild(deleteBtn);
             folderSection.appendChild(sectionHeader);
             
             // Drag and drop handlers
@@ -454,9 +526,8 @@ function createFavoritePopup() {
             sectionContent.style.display = 'none'; // Fermé par défaut
             folderSection.appendChild(sectionContent);
 
-            // Toggle folder content on click (accordion) - only on the folder info
-            var folderTogglePopup = sectionHeader.querySelector('.folder-toggle-popup');
-            folderTogglePopup.addEventListener('click', function(e) {
+            // Toggle folder content on click (accordion)
+            folderToggle.addEventListener('click', function(e) {
                 e.stopPropagation();
                 var chevron = sectionHeader.querySelector('.folder-chevron');
                 if (sectionContent.style.display === 'none') {
@@ -647,7 +718,112 @@ function createFavoritePopup() {
             }
         });
 
+        // Add context menu for moving to folder
+        card.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showMoveToFolderContextMenu(e, favorite);
+        });
+
         return card;
+    }
+
+    // Helper function to show context menu for moving favorite to folder
+    function showMoveToFolderContextMenu(event, favorite) {
+        // Remove existing context menu if any
+        var existingMenu = document.getElementById('folder-context-menu');
+        if (existingMenu) {
+            existingMenu.remove();
+        }
+
+        var contextMenu = document.createElement('div');
+        contextMenu.id = 'folder-context-menu';
+        contextMenu.style.cssText = `
+            position: fixed;
+            left: ${event.clientX}px;
+            top: ${event.clientY}px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 8px;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            min-width: 200px;
+        `;
+
+        var menuHeader = document.createElement('div');
+        menuHeader.textContent = 'Move to folder';
+        menuHeader.style.cssText = `
+            padding: 8px 12px;
+            color: #888;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        `;
+        contextMenu.appendChild(menuHeader);
+
+        var folders = JSON.parse(localStorage.getItem('folders')) || [];
+
+        // Option: Move to uncategorized
+        var uncategorizedOption = document.createElement('div');
+        uncategorizedOption.innerHTML = fabext_getIcon('folder', 'sm') + ' Uncategorized';
+        uncategorizedOption.style.cssText = `
+            padding: 8px 12px;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: background 0.2s;
+        `;
+        uncategorizedOption.addEventListener('mouseenter', function() {
+            this.style.background = '#2a2a2a';
+        });
+        uncategorizedOption.addEventListener('mouseleave', function() {
+            this.style.background = 'transparent';
+        });
+        uncategorizedOption.addEventListener('click', function() {
+            moveFavoriteToFolder(favorite.url, null);
+            contextMenu.remove();
+            popup.load();
+        });
+        contextMenu.appendChild(uncategorizedOption);
+
+        // Display folders
+        folders.forEach(function(folder) {
+            if (!folder || !folder.id) return; // Skip null/invalid folders
+            
+            var folderOption = document.createElement('div');
+            folderOption.innerHTML = fabext_getIcon('folder-filled', 'sm') + ' ' + folder.name;
+            folderOption.style.cssText = `
+                padding: 8px 12px;
+                color: ${folder.color};
+                cursor: pointer;
+                border-radius: 6px;
+                font-size: 14px;
+                transition: background 0.2s;
+            `;
+            folderOption.addEventListener('mouseenter', function() {
+                this.style.background = '#2a2a2a';
+            });
+            folderOption.addEventListener('mouseleave', function() {
+                this.style.background = 'transparent';
+            });
+            folderOption.addEventListener('click', function() {
+                moveFavoriteToFolder(favorite.url, folder.id);
+                contextMenu.remove();
+                popup.load();
+            });
+            contextMenu.appendChild(folderOption);
+        });
+
+        document.body.appendChild(contextMenu);
+
+        // Close context menu on click outside
+        setTimeout(function() {
+            document.addEventListener('click', function closeMenu() {
+                contextMenu.remove();
+                document.removeEventListener('click', closeMenu);
+            });
+        }, 0);
     }
 
     popup.load()
