@@ -37,7 +37,7 @@ function addToCartThumbnail(thumbnail) {
         // span, fabkit-Button-label
         var span = document.createElement("span");
         span.classList.add("fabkit-Button-label");
-        span.innerHTML = fabext_getIcon('shopping-cart','sm');
+        span.appendChild(fabext_getIconHtml('shopping-cart','sm'));
 
         // Add event listener to the addToCartButton to add or remove favorite
         addToCartButton.addEventListener('click', function(e) {
@@ -118,7 +118,7 @@ function ClearCartButton() {
             clearCartButton = document.createElement('button');
             clearCartButton.id = 'clearCartButton';
             clearCartButton.classList.add('fabkit-Button-root', 'fabkit-Button--ghost', 'fabkit-Button--md', 'fabkit-Button--icon', 'fabkit-Button--danger', 'fabkit-Button--fullWidth', 'fabkit-Button--iconOnly', 'fabkit-Button--blurify');
-            clearCartButton.innerHTML = fabext_getIcon('trash', 'md');
+            clearCartButton.appendChild(fabext_getIconHtml('trash', 'md'));
             clearCartButton.style.marginTop = '10px';
             clearCartButton.onclick = ClearCart;
 

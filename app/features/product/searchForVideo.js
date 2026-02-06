@@ -111,7 +111,7 @@ function searchForVideo() {
                     link.dataset.searchForVideo = true;
 
                     // add the icon to the link
-                    link.innerHTML = fabext_getIcon('video','xs') + link.innerHTML;
+                    link.insertBefore(fabext_getIconHtml('video','xs'), link.firstChild);
 
                     // add the video to the carousel
                     var liVdeo = document.createElement('li');
@@ -146,7 +146,16 @@ function searchForVideo() {
 
                         if (embed.type === 'youtube_playlist') {
                             var playlistIcon = document.createElement('div');
-                            playlistIcon.innerHTML = '<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-23"></use><path d="m 22.53,21.42 0,6.85 5.66,-3.42 -5.66,-3.42 0,0 z m -11.33,0 9.06,0 0,2.28 -9.06,0 0,-2.28 0,0 z m 0,-9.14 13.6,0 0,2.28 -13.6,0 0,-2.28 0,0 z m 0,4.57 13.6,0 0,2.28 -13.6,0 0,-2.28 0,0 z" fill="#fff" id="ytp-id-23"></path></svg>';
+                            var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                            svg.setAttribute('height', '100%');
+                            svg.setAttribute('version', '1.1');
+                            svg.setAttribute('viewBox', '0 0 36 36');
+                            svg.setAttribute('width', '100%');
+                            var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                            path.setAttribute('d', 'm 22.53,21.42 0,6.85 5.66,-3.42 -5.66,-3.42 0,0 z m -11.33,0 9.06,0 0,2.28 -9.06,0 0,-2.28 0,0 z m 0,-9.14 13.6,0 0,2.28 -13.6,0 0,-2.28 0,0 z m 0,4.57 13.6,0 0,2.28 -13.6,0 0,-2.28 0,0 z');
+                            path.setAttribute('fill', '#fff');
+                            svg.appendChild(path);
+                            playlistIcon.appendChild(svg);
                             playlistIcon.classList.add('fabext-playlist-icon');
                             divVideo.appendChild(playlistIcon);
                         }
@@ -167,7 +176,7 @@ function searchForVideo() {
                         divText.style.display = "flex";
                         divText.style.justifyContent = "left";
                         divText.style.alignItems = "center";
-                        divText.innerHTML = text;
+                        divText.textContent = text;
                         divVideo.appendChild(divText);
                     }
 

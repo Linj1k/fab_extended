@@ -1,10 +1,10 @@
 
 function initStorage() {
-    chrome.storage.sync.get(['favorites', 'folders'], function(result) {
+    browser.storage.sync.get(['favorites', 'folders'], function(result) {
         // Initialize folders if not exists
         if (!result.folders) {
             var defaultFolders = [];
-            chrome.storage.sync.set({folders: JSON.stringify(defaultFolders)}, function() {
+            browser.storage.sync.set({folders: JSON.stringify(defaultFolders)}, function() {
                 fabext_Log('Folders initialized to ', defaultFolders);
             });
             localStorage.setItem('folders', JSON.stringify(defaultFolders));
@@ -17,7 +17,7 @@ function initStorage() {
         if (!result.favorites) {
             var favorites = getFavorites();
             fabext_Log('Favorites currently is ', result.favorites);
-            chrome.storage.sync.set({favorites: JSON.stringify(favorites)}, function() {
+            browser.storage.sync.set({favorites: JSON.stringify(favorites)}, function() {
                 fabext_Log('Favorites is set to ', favorites);
             });
         } else {
@@ -46,7 +46,7 @@ function updateStorage() {
     var favorites = localStorage.getItem('favorites');
     var folders = localStorage.getItem('folders');
     
-    chrome.storage.sync.set({
+    browser.storage.sync.set({
         favorites: favorites,
         folders: folders
     }, function() {
@@ -61,7 +61,7 @@ function updateStorage() {
     updateHeartButton(document.getElementById('product-heartButton'), window.location.href, true)
 }
 function clearStorage() {
-    chrome.storage.sync.clear(function() {
+    browser.storage.sync.clear(function() {
         fabext_Log('Storage cleared');
     });
     updateHeartButton(document.getElementById('product-heartButton'), window.location.href, true)
@@ -90,7 +90,7 @@ function saveFavorite(heartButton,url,notify,folderId = null) {
         updateStorage()
         const favoriteBagde = document.getElementById('favorite-badge');
         if (favoriteBagde) {
-            favoriteBagde.innerHTML = favorites.length;
+            favoriteBagde.textContent = favorites.length;
         }
     }
 }
@@ -111,7 +111,7 @@ function removeFavorite(url,notify) {
         
         const favoriteBagde = document.getElementById('favorite-badge');
         if (favoriteBagde) {
-            favoriteBagde.innerHTML = favorites.length;
+            favoriteBagde.textContent = favorites.length;
         }
     }
 }
@@ -128,10 +128,12 @@ function updateHeartButton(heartButton,url,md = false) {
 
     if (isInFavorite(url)) {
         span.style.color = 'red';
-        span.innerHTML = fabext_getIcon('heart-filled', md ? 'md' : 'sm');
+        while (span.firstChild) span.removeChild(span.firstChild);
+        span.appendChild(fabext_getIconHtml('heart-filled', md ? 'md' : 'sm'));
     } else {
         span.style.color = 'inherit';
-        span.innerHTML = fabext_getIcon('heart', md ? 'md' : 'sm');
+        while (span.firstChild) span.removeChild(span.firstChild);
+        span.appendChild(fabext_getIconHtml('heart', md ? 'md' : 'sm'));
     }
 }
 

@@ -10,54 +10,54 @@ function searchForLinks() {
                 if (link.dataset.searchForLinks) return;
 
                 const href = link.href.trim().replace('www.','');
-                var text;
+                var iconName = null;
 
                 if (href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?fab\.com/) || href.startsWith('https://unrealengine.com/marketplace')) {
-                    text = fabext_getIcon('fab', 'xs') + link.innerHTML;
+                    iconName = 'fab';
                 } else if (href.startsWith('https://discord.gg') || href.startsWith('https://discord.com/invite/')) {
-                    text = fabext_getIcon('discord', 'xs') + link.innerHTML;
+                    iconName = 'discord';
                 } else if (href.startsWith('https://instagram.com')) {
-                    text = fabext_getIcon('instagram', 'xs') + link.innerHTML;
+                    iconName = 'instagram';
                 } else if (href.startsWith('https://facebook.com')) {
-                    text = fabext_getIcon('facebook', 'xs') + link.innerHTML;
+                    iconName = 'facebook';
                 } else if (href.startsWith('https://twitter.com') || href.startsWith('https://x.com')) {
-                    text = fabext_getIcon('twitter-x', 'xs') + link.innerHTML;
+                    iconName = 'twitter-x';
                 } else if (href.startsWith('https://linkedin.com')) {
-                    text = fabext_getIcon('linkedin', 'xs') + link.innerHTML;
+                    iconName = 'linkedin';
                 } else if (href.startsWith('https://youtube.com') && !href.includes('playlist') && !href.includes('watch?v')) {
-                    text = fabext_getIcon('youtube', 'xs') + link.innerHTML;
+                    iconName = 'youtube';
                 } else if (href.startsWith('https://twitch.tv')) {
-                    text = fabext_getIcon('twitch', 'xs') + link.innerHTML;
+                    iconName = 'twitch';
                 } else if (href.startsWith('https://reddit.com')) {
-                    text = fabext_getIcon('reddit', 'xs') + link.innerHTML;
+                    iconName = 'reddit';
                 } else if (href.startsWith('https://tiktok.com/')) {
-                    text = fabext_getIcon('tiktok', 'xs') + link.innerHTML;
+                    iconName = 'tiktok';
                 } else if (href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?epicgames\.com/)) {
-                    text = fabext_getIcon('epic-games', 'xs') + link.innerHTML;
+                    iconName = 'epic-games';
                 } else if (href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?unrealengine\.com/)) {
-                    text = fabext_getIcon('unreal-engine', 'xs') + link.innerHTML;
+                    iconName = 'unreal-engine';
                 } else if (href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?unity\.com/)) {
-                    text = fabext_getIcon('unity', 'xs') + link.innerHTML;
+                    iconName = 'unity';
                 } else if(href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?artstation\.com/)) {
-                    text = fabext_getIcon('artstation', 'xs') + link.innerHTML;
+                    iconName = 'artstation';
                 } else if(href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?github\.com/)) {
-                    text = fabext_getIcon('github', 'xs') + link.innerHTML;
+                    iconName = 'github';
                 } else if(href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?google\.com/)) {
-                    text = fabext_getIcon('google', 'xs') + link.innerHTML;
+                    iconName = 'google';
                 } else if(href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?dropbox\.com/)) {
-                    text = fabext_getIcon('dropbox', 'xs') + link.innerHTML;
+                    iconName = 'dropbox';
                 } else if (href.startsWith('https://skfb.ly') || href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?sketchfab\.com/)) {
-                    text = fabext_getIcon('sketchfab', 'xs') + link.innerHTML;
+                    iconName = 'sketchfab';
                 } else if(href.match(/https?:\/\/([a-zA-Z0-9-]+\.)?itch\.io/)) {
-                    text = fabext_getIcon('gamepad', 'xs') + link.innerHTML;
+                    iconName = 'gamepad';
                 } else if(href.startsWith('mailto:')) {
-                    text = fabext_getIcon('envelope', 'xs') + link.innerHTML;
+                    iconName = 'envelope';
                 }
 
-                if (text) {
+                if (iconName) {
                     link.dataset.searchForLinks = true;
                     link.style.marginLeft = "5px";
-                    link.innerHTML = text;
+                    link.insertBefore(fabext_getIconHtml(iconName, 'xs'), link.firstChild);
                 }
             });
         }

@@ -1,4 +1,4 @@
-const Version = chrome.runtime.getManifest().version;
+const Version = (typeof browser !== 'undefined' ? browser : chrome).runtime.getManifest().version;
 var devmode = false;
 var GithubManifest;
 
@@ -12,11 +12,31 @@ function fabext_getIcon(icon, size="md", customClass="") {
 function fabext_getIconHtml(icon, size="md", customClass="") {
     let iconHtml = document.createElement('i');
     iconHtml.className = `fabkit-Icon-root fabkit-Icon--intent-inherit fabkit-Icon--${size} edsicon edsicon-${icon} ${customClass}`;
+    iconHtml.setAttribute('aria-hidden', 'true');
     return iconHtml;
-    if (iconHtml) {
-        return iconHtml;
+}
+
+// Safe HTML insertion function to avoid innerHTML security issues
+function fabext_setHTML(element, htmlString) {
+    // Clear existing content
+    while (element.firstChild) {
+        element.removeChild(element.firstChild);
     }
-    return '';
+    
+    // For simple text content, use textContent
+    if (!htmlString.includes('<')) {
+        element.textContent = htmlString;
+        return;
+    }
+    
+    // Use DOMParser for safe HTML parsing
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(htmlString, 'text/html');
+    
+    // Append parsed nodes
+    while (doc.body.firstChild) {
+        element.appendChild(doc.body.firstChild);
+    }
 }
 
 function getEmbededVideoId(href) {
@@ -96,7 +116,9 @@ function fabext_SendRequest(method, url, data, callback) {
     xhr.open(method, FabAPIUrl+url, true);
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.setRequestHeader("x-csrftoken", fabext_GetCSRFToken());
+	xhr.setRequestHeader("Accept", "application/json, text/plain, */*");
+    xhr.setRequestHeader("X-CsrfToken", fabext_GetCSRFToken());
+    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
             // fabext_Log('[Fab Extended] Response:', method, url, data, xhr.responseText);

@@ -47,7 +47,7 @@ function addTechnicalDetails() {
                         technicalDetailsContent.appendChild(title);
 
                         const technicalDetailsText = document.createElement('div');
-                        technicalDetailsText.innerHTML = technicalDetailsData;
+                        fabext_setHTML(technicalDetailsText, technicalDetailsData);
                         technicalDetailsText.classList.add('fabkit-RichContent-root', 'fabkit-prose-prose');
                         technicalDetailsText.style.width = '100%';
                         technicalDetailsContent.appendChild(technicalDetailsText);

@@ -1,3 +1,8 @@
+// Browser API polyfill for Chrome/Firefox compatibility
+if (typeof browser === 'undefined') {
+  globalThis.browser = chrome;
+}
+
 console.log('Background script loaded');
 const defaultSettings = {
   "Index_CoverBackground": true,
@@ -15,25 +20,25 @@ const defaultSettings = {
   "Favorites_State": true,
 };
 
-chrome.runtime.onInstalled.addListener(function() {
-  chrome.storage.sync.get(['settings'], function(data) {
+browser.runtime.onInstalled.addListener(function() {
+  browser.storage.sync.get(['settings'], function(data) {
     if (!data.settings) {
-      chrome.storage.sync.set({ settings: JSON.stringify(defaultSettings) });
+      browser.storage.sync.set({ settings: JSON.stringify(defaultSettings) });
     } else {
       const settings = JSON.parse(data.settings);
       const newSettings = { ...defaultSettings, ...settings };
-      chrome.storage.sync.set({ settings: JSON.stringify(newSettings) });
+      browser.storage.sync.set({ settings: JSON.stringify(newSettings) });
     }
   });
 });
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action === 'open-favorites') {
-      chrome.tabs.create({ url: chrome.runtime.getURL('popup/favorites/page.html') });
+      browser.tabs.create({ url: browser.runtime.getURL('popup/favorites/page.html') });
     } else if (request.action === 'open-settings') {
-      chrome.tabs.create({ url: chrome.runtime.getURL('popup/settings/page.html') });
+      browser.tabs.create({ url: browser.runtime.getURL('popup/settings/page.html') });
     } else if (request.action === 'reset-settings') {
-      chrome.storage.sync.set({ settings: JSON.stringify(defaultSettings) });
+      browser.storage.sync.set({ settings: JSON.stringify(defaultSettings) });
       sendResponse({ settings: JSON.stringify(defaultSettings) });
     }
 });

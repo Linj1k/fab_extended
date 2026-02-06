@@ -19,13 +19,13 @@ function addSellerInformationToDetails() {
             
                         var sellerTitle = document.createElement('div');
                         sellerTitle.className = "fabkit-Typography-root fabkit-Typography--align-start fabkit-Typography--intent-secondary fabkit-Text--md fabkit-Text--regular";
-                        sellerTitle.innerHTML = title;
+                        sellerTitle.textContent = title;
                         seller.appendChild(sellerTitle);
             
                         var sellerLink = document.createElement('a');
                         sellerLink.href = href || data || "#";
                         sellerLink.className = "fabkit-Typography-root fabkit-Typography--align-start fabkit-Typography--intent-primary fabkit-Text--sm fabkit-Text--regular";
-                        sellerLink.innerHTML = data;
+                        sellerLink.textContent = data;
                         seller.appendChild(sellerLink);
             
                         List.appendChild(seller);
@@ -55,7 +55,7 @@ function addSellerInformationToDetails() {
                         socialLink.target = "_blank";
                         socialLink.rel = "noopener noreferrer";
                         socialLink.className = "fabkit-Typography-root fabkit-Typography--align_start fabkit-Typography--intent-primary fabkit-Text--sm fabkit-Text--regular fabext-social-link";
-                        socialLink.innerHTML = fabext_getIcon(social.icon || social.name.toLowerCase(), 'md');
+                        socialLink.appendChild(fabext_getIconHtml(social.icon || social.name.toLowerCase(), 'md'));
                         socialLink.title = social.name;
                         socialLinks.appendChild(socialLink);
                     });
