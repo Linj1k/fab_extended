@@ -14,20 +14,20 @@ const loadSettings = () => {
 
         setting.addEventListener('change', function() {
             settings[key] = setting.type === 'checkbox' ? setting.checked : setting.value;
-            chrome.storage.sync.set({ settings: JSON.stringify(settings) });
+            browser.storage.sync.set({ settings: JSON.stringify(settings) });
         });
     });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    chrome.storage.sync.get(['settings'], function(data) {
+    browser.storage.sync.get(['settings'], function(data) {
         settings = data.settings ? JSON.parse(data.settings || []) : [];
         console.log('settings', settings);
         loadSettings();
 
         document.getElementById('reset').addEventListener('click', function() {
             if (confirm('Are you sure you want to reset all settings?')) {
-                chrome.runtime.sendMessage({action: 'reset-settings'}, function(response) {
+                browser.runtime.sendMessage({action: 'reset-settings'}, function(response) {
                     settings = JSON.parse(response.settings);
                     loadSettings();
                 });

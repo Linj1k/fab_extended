@@ -55,10 +55,15 @@ function setupAutoScroll(container) {
     });
 }
 
+// Browser API polyfill for Chrome/Firefox compatibility
+if (typeof browser === 'undefined') {
+    globalThis.browser = chrome;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const versionElement = document.getElementById('version');
     if (versionElement) {
-        versionElement.textContent = chrome.runtime.getManifest().version;
+        versionElement.textContent = browser.runtime.getManifest().version;
     }
 
     const favoritesList = document.getElementById('favorites-list');
@@ -72,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const openInNewTab = document.getElementById('openInNewTab');
     if (openInNewTab) {
         openInNewTab.addEventListener('click', function() {
-            chrome.runtime.sendMessage({action: 'open-favorites'});
+            browser.runtime.sendMessage({action: 'open-favorites'});
         });
     }
 
@@ -80,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const openSettings = document.getElementById('openSettings');
     if (openSettings) {
         openSettings.addEventListener('click', function() {
-            chrome.runtime.sendMessage({action: 'open-settings'});
+            browser.runtime.sendMessage({action: 'open-settings'});
         });
     }
 
@@ -140,17 +145,34 @@ document.addEventListener('DOMContentLoaded', function() {
             flex: 1;
         `;
         
-        var folderIcon = isUncategorized 
-            ? '<i class="fa-regular fa-folder"></i>' 
-            : '<i class="fa-solid fa-grip-vertical" style="color: #666; cursor: move;"></i>';
+        // Clear and build folder info
+        while (folderInfo.firstChild) folderInfo.removeChild(folderInfo.firstChild);
         
-        folderInfo.innerHTML = `
-            ${folderIcon}
-            <span style="color: ${folderData.color}; font-weight: 600; font-size: 14px; cursor: pointer;" class="folder-toggle">
-                <i class="fa-solid fa-chevron-right folder-chevron"></i>
-                <i class="fa-solid fa-folder"></i> ${folderData.name} (${folderFavorites.length})
-            </span>
-        `;
+        // Add grip or folder icon
+        var iconElem = document.createElement('i');
+        if (isUncategorized) {
+            iconElem.className = 'fa-regular fa-folder';
+        } else {
+            iconElem.className = 'fa-solid fa-grip-vertical';
+            iconElem.style.cssText = 'color: #666; cursor: move;';
+        }
+        folderInfo.appendChild(iconElem);
+        
+        // Add folder toggle span
+        var toggleSpan = document.createElement('span');
+        toggleSpan.style.cssText = `color: ${folderData.color}; font-weight: 600; font-size: 14px; cursor: pointer;`;
+        toggleSpan.className = 'folder-toggle';
+        
+        var chevronIcon = document.createElement('i');
+        chevronIcon.className = 'fa-solid fa-chevron-right folder-chevron';
+        toggleSpan.appendChild(chevronIcon);
+        
+        var folderIconInner = document.createElement('i');
+        folderIconInner.className = 'fa-solid fa-folder';
+        toggleSpan.appendChild(folderIconInner);
+        
+        toggleSpan.appendChild(document.createTextNode(' ' + folderData.name + ' (' + folderFavorites.length + ')'));
+        folderInfo.appendChild(toggleSpan);
         
         // Folder actions (copy and delete buttons)
         var folderActions = document.createElement('div');
@@ -162,7 +184,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Copy button
         var copyBtn = document.createElement('button');
-        copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i>';
+        var copyIcon = document.createElement('i');
+        copyIcon.className = 'fa-solid fa-copy';
+        copyBtn.appendChild(copyIcon);
         copyBtn.title = 'Copy all links';
         copyBtn.style.cssText = `
             padding: 6px 10px;
@@ -184,11 +208,15 @@ document.addEventListener('DOMContentLoaded', function() {
             var links = folderData.name + ":\n\n" + folderFavorites.map(fav => fav.url).join('\n');
             
             navigator.clipboard.writeText(links).then(function() {
-                var originalHTML = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                var originalIcon = copyBtn.firstChild;
+                while (copyBtn.firstChild) copyBtn.removeChild(copyBtn.firstChild);
+                var checkIcon = document.createElement('i');
+                checkIcon.className = 'fa-solid fa-check';
+                copyBtn.appendChild(checkIcon);
                 copyBtn.style.color = '#10b981';
                 setTimeout(function() {
-                    copyBtn.innerHTML = originalHTML;
+                    while (copyBtn.firstChild) copyBtn.removeChild(copyBtn.firstChild);
+                    copyBtn.appendChild(originalIcon);
                     copyBtn.style.color = '#3b82f6';
                 }, 2000);
             }).catch(function(err) {
@@ -201,7 +229,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Delete button (only for non-uncategorized folders)
         if (!isUncategorized) {
             var deleteBtn = document.createElement('button');
-            deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            var trashIcon = document.createElement('i');
+            trashIcon.className = 'fa-solid fa-trash';
+            deleteBtn.appendChild(trashIcon);
             deleteBtn.title = 'Delete folder';
             deleteBtn.style.cssText = `
                 padding: 6px 10px;
@@ -235,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Get the favorites from the storage
-    chrome.storage.sync.get(['favorites', 'folders'], function(data) {
+    browser.storage.sync.get(['favorites', 'folders'], function(data) {
         // Get the favorites and folders from the storage
         var favorites = JSON.parse(data.favorites) || [];
         var folders = JSON.parse(data.folders) || [];
@@ -248,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update the favorites list
         var favoritesList = document.getElementById('favorites-list');
         if (!favoritesList) return;
-        favoritesList.innerHTML = '';
+        while (favoritesList.firstChild) favoritesList.removeChild(favoritesList.firstChild);
     
         favorites.sort(function(a, b) {
             return new Date(b.created_at) - new Date(a.created_at);
@@ -417,7 +447,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     folders.splice(targetIndex, 0, draggedFolder);
 
                     // Save reordered folders
-                    chrome.storage.sync.set({folders: JSON.stringify(folders)}, function() {
+                    browser.storage.sync.set({folders: JSON.stringify(folders)}, function() {
                         console.log('Folders reordered');
                         location.reload();
                     });
@@ -524,7 +554,7 @@ document.addEventListener('DOMContentLoaded', function() {
             favorites = favorites.filter(function(fav) {
                 return fav.id !== favorite.id;
             });
-            chrome.storage.sync.set({favorites: JSON.stringify(favorites)}, function() {
+            browser.storage.sync.set({favorites: JSON.stringify(favorites)}, function() {
                 console.log('Favorites is set to ' + JSON.stringify(favorites));
             });
             favAmount.textContent = favorites.length;
@@ -597,12 +627,15 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         contextMenu.appendChild(menuHeader);
 
-        chrome.storage.sync.get(['folders'], function(data) {
+        browser.storage.sync.get(['folders'], function(data) {
             var folders = JSON.parse(data.folders) || [];
 
             // Option: Move to uncategorized
             var uncategorizedOption = document.createElement('div');
-            uncategorizedOption.innerHTML = '<i class="fa-regular fa-folder"></i> Uncategorized';
+            var folderIcon = document.createElement('i');
+            folderIcon.className = 'fa-regular fa-folder';
+            uncategorizedOption.appendChild(folderIcon);
+            uncategorizedOption.appendChild(document.createTextNode(' Uncategorized'));
             uncategorizedOption.style.cssText = `
                 padding: 8px 12px;
                 color: #fff;
@@ -629,7 +662,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!folder || !folder.id) return; // Skip null/invalid folders
                 
                 var folderOption = document.createElement('div');
-                folderOption.innerHTML = '<i class="fa-solid fa-folder"></i> ' + folder.name;
+                var folderIconOpt = document.createElement('i');
+                folderIconOpt.className = 'fa-solid fa-folder';
+                folderOption.appendChild(folderIconOpt);
+                folderOption.appendChild(document.createTextNode(' ' + folder.name));
                 folderOption.style.cssText = `
                     padding: 8px 12px;
                     color: ${folder.color};
@@ -665,12 +701,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function moveFavoriteToFolder(favoriteUrl, folderId) {
-        chrome.storage.sync.get(['favorites'], function(data) {
+        browser.storage.sync.get(['favorites'], function(data) {
             var favorites = JSON.parse(data.favorites) || [];
             var favoriteIndex = favorites.findIndex(f => f.url === favoriteUrl);
             if (favoriteIndex !== -1) {
                 favorites[favoriteIndex].folder = folderId;
-                chrome.storage.sync.set({favorites: JSON.stringify(favorites)}, function() {
+                browser.storage.sync.set({favorites: JSON.stringify(favorites)}, function() {
                     console.log('Favorite moved to folder');
                 });
             }
@@ -910,7 +946,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function createFolder(name, color) {
-        chrome.storage.sync.get(['folders'], function(data) {
+        browser.storage.sync.get(['folders'], function(data) {
             var folders = JSON.parse(data.folders) || [];
             var newFolder = {
                 id: Date.now().toString(),
@@ -919,14 +955,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 created_at: new Date().toISOString()
             };
             folders.push(newFolder);
-            chrome.storage.sync.set({folders: JSON.stringify(folders)}, function() {
+            browser.storage.sync.set({folders: JSON.stringify(folders)}, function() {
                 console.log('Folder created');
             });
         });
     }
 
     function deleteFolder(folderId) {
-        chrome.storage.sync.get(['folders', 'favorites'], function(data) {
+        browser.storage.sync.get(['folders', 'favorites'], function(data) {
             var folders = JSON.parse(data.folders) || [];
             var favorites = JSON.parse(data.favorites) || [];
             
@@ -941,7 +977,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Remove the folder
             folders = folders.filter(f => f.id !== folderId);
             
-            chrome.storage.sync.set({
+            browser.storage.sync.set({
                 folders: JSON.stringify(folders),
                 favorites: JSON.stringify(favorites)
             }, function() {

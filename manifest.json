@@ -1,15 +1,28 @@
 {
     "manifest_version": 3,
     "name": "Fab Extended",
-    "version": "0.2.7",
+    "version": "0.2.8",
     "description": "Enhances and adds Fab.com features like bookmarks, video integration and more",
     "permissions": [
         "storage"
     ],
+    "host_permissions": [
+        "https://www.fab.com/*"
+    ],
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "fab-extended@enzolefevres.com",
+        "strict_min_version": "140.0",
+        "data_collection_permissions": {
+          "required": ["none"]
+        }
+      }
+    },
     "content_scripts": [
       {
         "matches": ["https://www.fab.com/*"],
         "js": [
+          "app/utils/browser-polyfill.js",
           "app/utils/toastifyjs/toastify-js.js",
           "app/utils/utils.js",
           "app/utils/storage.js",
@@ -40,7 +53,8 @@
       }
     ],
     "background": {
-      "service_worker": "app/background.js"
+      "service_worker": "app/background.js",
+      "scripts": ["app/background.js"]
     },
     "icons": {
       "128": "icon.png"

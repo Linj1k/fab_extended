@@ -75,7 +75,7 @@ function createFavoritePopup() {
     popup.appendChild(headerDiv);
 
     var title = document.createElement("span");
-    title.innerHTML = "Favorites";
+    title.textContent = "Favorites";
     headerDiv.appendChild(title);
 
     var headerButtons = document.createElement("div");
@@ -84,7 +84,7 @@ function createFavoritePopup() {
 
     // add button to create new folder
     var addFolderButton = document.createElement("button");
-    addFolderButton.innerHTML = fabext_getIcon('folder-plus');
+    addFolderButton.appendChild(fabext_getIconHtml('folder-plus'));
     addFolderButton.title = "New folder";
     addFolderButton.addEventListener('click', function() {
         showCreateFolderModal(function() {
@@ -95,16 +95,16 @@ function createFavoritePopup() {
 
     // add button to open favorites in a new tab in right of the header
     var openButton = document.createElement("button");
-    openButton.innerHTML = fabext_getIcon('link');
+    openButton.appendChild(fabext_getIconHtml('link'));
     openButton.title = "Open favorites in a new tab";
     openButton.addEventListener('click', function() {
-        chrome.runtime.sendMessage({action: 'open-favorites'});
+        browser.runtime.sendMessage({action: 'open-favorites'});
     });
     headerButtons.appendChild(openButton);
 
     // Create the clear button in the header
     var clearButton = document.createElement("button");
-    clearButton.innerHTML = fabext_getIcon('trash');
+    clearButton.appendChild(fabext_getIconHtml('trash'));
     clearButton.classList.add("favorite-popup-clear-button");
     clearButton.title = "Clear favorites";
     clearButton.addEventListener('click', function() {
@@ -117,10 +117,10 @@ function createFavoritePopup() {
 
     // add button to open settings in a new tab in rigth of the header
     var openButtonSetting = document.createElement("button");
-    openButtonSetting.innerHTML = fabext_getIcon('cog');
+    openButtonSetting.appendChild(fabext_getIconHtml('cog'));
     openButtonSetting.title = "Open Settings in a new tab";
     openButtonSetting.addEventListener('click', function() {
-        chrome.runtime.sendMessage({action: 'open-settings'});
+        browser.runtime.sendMessage({action: 'open-settings'});
     });
     headerButtons.appendChild(openButtonSetting);
 
@@ -133,7 +133,7 @@ function createFavoritePopup() {
     `;
 
     var searchIconWrapper = document.createElement("div");
-    searchIconWrapper.innerHTML = fabext_getIcon("magnifier", "sm");
+    searchIconWrapper.appendChild(fabext_getIconHtml("magnifier", "sm"));
     searchIconWrapper.style.cssText = `
         position: absolute;
         left: 28px;
@@ -257,11 +257,20 @@ function createFavoritePopup() {
             : 'display: flex; align-items: center; gap: 6px; flex: 1; cursor: pointer;';
         folderInfo.classList.add(isUncategorized ? 'uncategorized-toggle' : 'folder-toggle-popup');
         
-        var folderIcon = isUncategorized 
-            ? fabext_getIcon('folder',"md","folder-chevron")
-            : fabext_getIcon('square-grid-2x2',"xs")+' '+fabext_getIcon('folder',"md","folder-chevron");
+        // Clear existing content
+        while (folderInfo.firstChild) folderInfo.removeChild(folderInfo.firstChild);
         
-        folderInfo.innerHTML = folderIcon + ' ' + folderData.name + ' (' + folderFavorites.length + ')';
+        // Add folder icons
+        if (isUncategorized) {
+            folderInfo.appendChild(fabext_getIconHtml('folder',"md","folder-chevron"));
+        } else {
+            folderInfo.appendChild(fabext_getIconHtml('square-grid-2x2',"xs"));
+            folderInfo.appendChild(document.createTextNode(' '));
+            folderInfo.appendChild(fabext_getIconHtml('folder',"md","folder-chevron"));
+        }
+        
+        // Add folder name and count
+        folderInfo.appendChild(document.createTextNode(' ' + folderData.name + ' (' + folderFavorites.length + ')'));
         folderInfo.style.color = folderData.color;
         
         var folderActions = document.createElement('div');
@@ -269,7 +278,7 @@ function createFavoritePopup() {
         
         // Copy button
         var copyBtn = document.createElement('button');
-        copyBtn.innerHTML = fabext_getIcon('square-on-tilted-square', 'sm');
+        copyBtn.appendChild(fabext_getIconHtml('square-on-tilted-square', 'sm'));
         copyBtn.title = 'Copy all links';
         copyBtn.style.cssText = 'padding: 6px 10px; background: transparent; color: #3b82f6; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;';
         copyBtn.addEventListener('mouseenter', function() {
@@ -285,11 +294,13 @@ function createFavoritePopup() {
             var links = folderData.name + ":\n\n" + folderFavorites.map(function(fav) { return fav.url; }).join('\n');
             
             navigator.clipboard.writeText(links).then(function() {
-                var originalHTML = copyBtn.innerHTML;
-                copyBtn.innerHTML = '✓';
+                var originalIcon = copyBtn.firstChild;
+                while (copyBtn.firstChild) copyBtn.removeChild(copyBtn.firstChild);
+                copyBtn.textContent = '✓';
                 copyBtn.style.color = '#10b981';
                 setTimeout(function() {
-                    copyBtn.innerHTML = originalHTML;
+                    while (copyBtn.firstChild) copyBtn.removeChild(copyBtn.firstChild);
+                    copyBtn.appendChild(originalIcon);
                     copyBtn.style.color = '#3b82f6';
                 }, 2000);
             }).catch(function(err) {
@@ -302,7 +313,7 @@ function createFavoritePopup() {
         // Delete button (only for non-uncategorized folders)
         if (!isUncategorized) {
             var deleteBtn = document.createElement('button');
-            deleteBtn.innerHTML = fabext_getIcon('trash', 'sm');
+            deleteBtn.appendChild(fabext_getIconHtml('trash', 'sm'));
             deleteBtn.title = 'Delete folder';
             deleteBtn.style.cssText = 'padding: 6px 10px; background: transparent; color: #dc2626; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;';
             deleteBtn.addEventListener('mouseenter', function() {
@@ -331,7 +342,7 @@ function createFavoritePopup() {
 
     // Load function to load the favorites from localStorage
     popup.load = function() {
-        contentDiv.innerHTML = "";
+        while (contentDiv.firstChild) contentDiv.removeChild(contentDiv.firstChild);
         // Reset search bar
         searchInput.value = '';
         
@@ -618,7 +629,7 @@ function createFavoritePopup() {
         `;
 
         var removeButton = document.createElement('button');
-        removeButton.innerHTML = fabext_getIcon('heart-filled', 'sm');
+        removeButton.appendChild(fabext_getIconHtml('heart-filled', 'sm'));
         removeButton.title = "Remove from favorites";
         removeButton.style.cssText = `
             flex-shrink: 0;
@@ -765,7 +776,8 @@ function createFavoritePopup() {
 
         // Option: Move to uncategorized
         var uncategorizedOption = document.createElement('div');
-        uncategorizedOption.innerHTML = fabext_getIcon('folder', 'sm') + ' Uncategorized';
+        uncategorizedOption.appendChild(fabext_getIconHtml('folder', 'sm'));
+        uncategorizedOption.appendChild(document.createTextNode(' Uncategorized'));
         uncategorizedOption.style.cssText = `
             padding: 8px 12px;
             color: #fff;
@@ -792,7 +804,8 @@ function createFavoritePopup() {
             if (!folder || !folder.id) return; // Skip null/invalid folders
             
             var folderOption = document.createElement('div');
-            folderOption.innerHTML = fabext_getIcon('folder-filled', 'sm') + ' ' + folder.name;
+            folderOption.appendChild(fabext_getIconHtml('folder-filled', 'sm'));
+            folderOption.appendChild(document.createTextNode(' ' + folder.name));
             folderOption.style.cssText = `
                 padding: 8px 12px;
                 color: ${folder.color};
@@ -843,7 +856,7 @@ function addFavoriteButtonToNavbar() {
             spanFavorite.classList.add("fabkit-StickyElement-root", "fabkit-StickyElement--top-right", "fabkit-StickyElement--show");
 
             var favoriteButton = document.createElement("button");
-            favoriteButton.innerHTML = fabext_getIcon('heart');
+            favoriteButton.appendChild(fabext_getIconHtml('heart'));
             favoriteButton.id = "favorite-button";
             favoriteButton.classList.add("fabkit-Button-root", "fabkit-Button--icon", "fabkit-Button--sm", "fabkit-Button--ghost", "fabkit-MegaMenu-iconButton");
             favoriteButton.type = "button";
@@ -928,7 +941,7 @@ function addFavoriteButtonProduct() {
             // span
             var span = document.createElement("span");
             span.classList.add("fabkit-Button-label");
-            span.innerHTML = fabext_getIcon('heart','md');
+            span.appendChild(fabext_getIconHtml('heart','md'));
             heartButton.appendChild(span);
 
             // Add event listener to the heartButton to add or remove favorite
@@ -999,7 +1012,7 @@ function addFavoriteButtonThumbnail(thumbnail) {
 
         var span = document.createElement("span");
         span.classList.add("fabkit-Button-label");
-        span.innerHTML = fabext_getIcon('heart','sm');
+        span.appendChild(fabext_getIconHtml('heart','sm'));
 
 
         // Add event listener to the heartButton to add or remove favorite
@@ -1090,7 +1103,7 @@ function showFolderSelectionModal(heartButton, url) {
 
     // Create new folder button
     var createNewBtn = document.createElement("button");
-    createNewBtn.innerHTML = '+ Create new folder';
+    createNewBtn.textContent = '+ Create new folder';
     createNewBtn.style.cssText = `
         width: 100%;
         padding: 12px;
@@ -1168,7 +1181,12 @@ function createFolderOption(folder) {
         color: #fff;
         font-size: 14px;
     `;
-    option.innerHTML = folder.id ? fabext_getIcon('folder-filled', 'sm') + ' ' + folder.name : folder.name;
+    if (folder.id) {
+        option.appendChild(fabext_getIconHtml('folder-filled', 'sm'));
+        option.appendChild(document.createTextNode(' ' + folder.name));
+    } else {
+        option.textContent = folder.name;
+    }
     
     option.addEventListener('mouseenter', function() {
         this.style.background = '#333';

@@ -1,7 +1,14 @@
 # Fab Extended
 This extension adds new features and improves the user experience on the Fab website.
 
+## Installation
+
+### Chrome Web Store
 Link: https://chromewebstore.google.com/detail/fab-extended/abfmkmnklojeelmmlkpilhaofpljkihn
+
+### Firefox
+The extension is fully compatible with Firefox. You can install it manually by loading the extension in developer mode or submit it to Firefox Add-ons.
+Link: https://addons.mozilla.org/en-US/firefox/addon/fab-extended/
 
 ## Features
 - Favorites (Button on product page, Button on thumbnails, Button/Menu in navbar, Search bar, Folders)
